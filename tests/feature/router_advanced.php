@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 路由测试，中间件与路由
+ * 高级路由，中间件与路由
  * php -S 0.0.0.0:8080 router_advanced.php
  * 测试路径：/, /index, /foo, /bar
  */

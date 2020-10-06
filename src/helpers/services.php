@@ -8,7 +8,6 @@ use JDI\Services\CURL;
 use JDI\Services\Flash;
 use JDI\Services\Lang;
 use JDI\Services\Log;
-use JDI\Services\Mail;
 use JDI\Services\MessageQueue;
 use JDI\Services\PDOEngine;
 use JDI\Services\Request;
@@ -237,19 +236,6 @@ if (!function_exists('svc_flash')) {
         return App::singleton('service.flash', function () {
             $http_host = md5($_SERVER['HTTP_HOST'] ?? '');
             return new Flash(['prefix' => "FLASH:{$http_host}:"]);
-        });
-    }
-}
-
-if (!function_exists('svc_mail')) {
-    /**
-     * 邮件
-     * @return Mail
-     */
-    function svc_mail()
-    {
-        return App::singleton('service.mail', function () {
-            return new Mail(svc_config()->get('mail'));
         });
     }
 }
