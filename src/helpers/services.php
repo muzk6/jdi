@@ -3,6 +3,7 @@
 use JDI\App;
 use JDI\Services\Auth;
 use JDI\Services\Blade;
+use JDI\Services\BladeOne;
 use JDI\Services\Config;
 use JDI\Services\CURL;
 use JDI\Services\Flash;
@@ -16,7 +17,6 @@ use JDI\Services\Whitelist;
 use JDI\Services\Xdebug;
 use JDI\Services\XHProf;
 use JDI\Services\XSRF;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 if (!function_exists('svc_config')) {
     /**
@@ -133,7 +133,7 @@ if (!function_exists('db')) {
     }
 }
 
-if (!function_exists('blade')) {
+if (!function_exists('svc_blade')) {
     /**
      * 模板引擎
      * @return Blade
@@ -144,14 +144,13 @@ if (!function_exists('blade')) {
             return new Blade([
                 'path_view' => $app['config.path_view'],
                 'path_cache' => $app['config.path_data'] . '/view_cache',
-                'no_cache' => env_is_dev(),
-                'directives' => null,
+                'mode' => env_is_dev() ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO,
             ]);
         });
     }
 }
 
-if (!function_exists('redis')) {
+if (!function_exists('svc_redis')) {
     /**
      * Redis
      * @return Redis
@@ -186,7 +185,7 @@ if (!function_exists('redis')) {
     }
 }
 
-if (!function_exists('curl')) {
+if (!function_exists('svc_curl')) {
     /**
      * CURL
      * @return CURL
@@ -199,7 +198,7 @@ if (!function_exists('curl')) {
     }
 }
 
-if (!function_exists('xsrf')) {
+if (!function_exists('svc_xsrf')) {
     /**
      * XSRF
      * @return XSRF
@@ -249,7 +248,7 @@ if (!function_exists('svc_rabbitmq')) {
     {
         return App::singleton('service.rabbitmq', function () {
             return new MessageQueue(svc_config()->get('rabbitmq'), function ($host) {
-                return new AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['passwd']);
+                return new \PhpAmqpLib\Connection\AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['passwd']);
             });
         });
     }

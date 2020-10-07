@@ -8,8 +8,8 @@
 <h1>{{ $title }}</h1>
 <form method="post" action="/demo/doc">
     {!! xsrf_field() !!}
-    <input type="text" name="first_name" value="{{ $firstName }}">
-    <input type="text" name="last_name" value="{{ $lastName }}">
+    <input type="text" name="first_name" value="{{ $first_name }}">
+    <input type="text" name="last_name" value="{{ $last_name }}">
     <button>Doc Submit</button>
     <input type="button" id="ok" value="XHR Submit"/>
 </form>

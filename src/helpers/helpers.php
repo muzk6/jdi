@@ -2,7 +2,6 @@
 
 use JDI\App;
 use JDI\Exceptions\AppException;
-use JDI\Services\Blade;
 use JDI\Services\Validator;
 
 if (!function_exists('config')) {
@@ -171,11 +170,10 @@ if (!function_exists('assign')) {
      * 定义模板变量
      * @param string $name
      * @param mixed $value
-     * @return Blade
      */
     function assign(string $name, $value)
     {
-        return svc_blade()->assign($name, $value);
+        svc_blade()->assign($name, $value);
     }
 }
 
@@ -185,6 +183,7 @@ if (!function_exists('view')) {
      * @param string $view 模板名
      * @param array $params 模板里的参数
      * @return string
+     * @throws Exception
      */
     function view(string $view, array $params = [])
     {

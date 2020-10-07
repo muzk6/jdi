@@ -3,13 +3,11 @@
 
 namespace JDI\Services;
 
-use duncan3dc\Laravel\BladeInstance;
-
 /**
- * 基于 Blade 封装的模板引擎
+ * 基于 BladeOne 封装的模板引擎
  * @package JDI\Services
  */
-class Blade extends BladeInstance
+class Blade extends BladeOne
 {
     /**
      * @var array 需要 assign 的变量集合
@@ -18,11 +16,7 @@ class Blade extends BladeInstance
 
     public function __construct(array $conf)
     {
-        parent::__construct($conf['path_view'], $conf['path_cache'], $conf['directives']);
-
-        if ($conf['no_cache'] && file_exists($conf['path_cache'])) {
-            array_map('unlink', glob($conf['path_cache'] . '/*'));
-        }
+        parent::__construct($conf['path_view'], $conf['path_cache'], $conf['mode']);
     }
 
     /**
@@ -43,13 +37,14 @@ class Blade extends BladeInstance
      * @param string $view 模板名
      * @param array $params 模板里的参数
      * @return string
+     * @throws \Exception
      */
     public function view(string $view, array $params = [])
     {
         $params = array_merge($this->assign_vars, $params);
         $this->assign_vars = [];
 
-        return $this->render($view, array_merge($this->assign_vars, $params));
+        return $this->run($view, array_merge($this->assign_vars, $params));
     }
 
 }
