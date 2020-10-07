@@ -1329,23 +1329,24 @@ class BladeOne
     /**
      * Evaluates a compiled file using the current variables
      *
-     * @param string $compiledFile full path of the compile file.
-     * @param array $variables
+     * @param string $__compiledFile full path of the compile file.
+     * @param array $__variables
      * @return string
      * @throws Exception
      */
-    protected function evaluatePath($compiledFile, $variables)
+    protected function evaluatePath($__compiledFile, $__variables)
     {
         \ob_start();
         // note, the variables are extracted locally inside this method,
         // they are not global variables :-3
-        \extract($variables);
+        \extract($__variables);
+        unset($__variables);
         // We'll evaluate the contents of the view inside a try/catch block so we can
         // flush out any stray output that might get out before an error occurs or
         // an exception is thrown. This prevents any partial views from leaking.
         try {
             /** @noinspection PhpIncludeInspection */
-            include $compiledFile;
+            include $__compiledFile;
         } catch (Exception $e) {
             $this->handleViewException($e);
         }

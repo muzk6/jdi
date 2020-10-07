@@ -293,7 +293,16 @@ if (!function_exists('svc_xhprof')) {
     function svc_xhprof()
     {
         return App::singleton('service.xhprof', function ($app) {
-            $conf = svc_config()->get('xhprof');
+            if (svc_config()->exists('xhprof')) {
+                $conf = svc_config()->get('xhprof');
+            } else {
+                $conf = [
+                    'enable' => 0,
+                    'probability' => 1, // 采样概率，1=100%
+                    'min_time' => 0.1, // 最小耗时，单位秒，超时则记录否则跳过
+                ];
+            }
+
             $conf['path_data'] = $app['config.path_data'] . '/xhprof';
 
             return new XHProf($conf);

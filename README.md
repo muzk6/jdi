@@ -4,16 +4,16 @@
 ## 起步
 
 ```php
-$path_root = realpath(__DIR__ . '/../'); // 项目根目录
+$path_root = realpath(__DIR__); // 项目根目录
 require $path_root . '/vendor/autoload.php';
 
 // 框架初始化
 \JDI\App::init([
     'config.app_env' => 'dev', // 当前环境；dev 时回显错误信息
-    'config.path_config_first' => $path_root . '/config/dev', // 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找
-    'config.path_config_second' => $path_root . '/config/common', // 第二优先级配置目录
+    'config.path_config_first' => $path_root . '/vendor/muzk6/jdi/config/dev', // 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找
+    'config.path_config_second' => $path_root . '/vendor/muzk6/jdi/config/common', // 第二优先级配置目录
+    'config.path_view' => $path_root . '/vendor/muzk6/jdi/views', // 视图模板目录
     'config.path_data' => $path_root . '/data', // 数据目录
-    'config.path_view' => $path_root . '/views', // 视图模板目录
     'config.init_handler' => null, // 容器初始化回调，为空时默认调用 \JDI\App::initHandler
 ]);
 
@@ -24,7 +24,7 @@ route_get('/', function () {
 svc_router()->dispatch();
 ```
 
-*上面的配置文件，开发者可按需复制到自己的项目里修改*
+*上面的 `vendor/muzk6/jdi/` 里用到的目录，开发者可按需复制到自己的项目里修改*
 
 ### 更多例子请 `cd` 到目录 `tests/feature`
 
