@@ -68,7 +68,7 @@ class Config
 
         if (!$this->exists($filename)) {
             trigger_error("{$filename}.php 配置文件不存在", E_USER_WARNING);
-            return null;
+            return '';
         }
 
 
@@ -76,7 +76,7 @@ class Config
         foreach ($keys as $item) {
             if (!isset($value[$item])) {
                 trigger_error("配置项 {$key} 不存在", E_USER_WARNING);
-                return null;
+                return '';
             }
 
             $value = $value[$item];

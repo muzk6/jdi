@@ -15,6 +15,7 @@ class ConfigTest extends TestCase
     {
         $this->assertEquals('Parameter error', svc_config()->get('lang_en.10001000'));
         $this->assertEquals('Parameter error', config('lang_en.10001000'));
+        $this->assertEquals('', svc_config()->get('not_exists'));
     }
 
     public function testSet()
