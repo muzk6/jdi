@@ -13,7 +13,7 @@ require $path_root . '/vendor/autoload.php';
     'config.path_config_first' => $path_root . '/vendor/muzk6/jdi/config/dev', // 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找
     'config.path_config_second' => $path_root . '/vendor/muzk6/jdi/config/common', // 第二优先级配置目录
     'config.path_view' => $path_root . '/vendor/muzk6/jdi/views', // 视图模板目录
-    'config.path_data' => $path_root . '/data', // 数据目录
+    'config.path_data' => $path_root . '/data', // 数据目录，目录必须有写权限
     'config.init_handler' => null, // 容器初始化回调，为空时默认调用 \JDI\App::initHandler
 ]);
 
