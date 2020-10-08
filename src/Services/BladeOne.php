@@ -1212,9 +1212,6 @@ class BladeOne
     public function getTemplateFile($templateName = '')
     {
         $templateName = (empty($templateName)) ? $this->fileName : $templateName;
-        if (\strpos($templateName, '/') !== false) {
-            return $this->locateTemplate($templateName); // it's a literal
-        }
         $arr = \explode('.', $templateName);
         $c = \count($arr);
         if ($c == 1) {
