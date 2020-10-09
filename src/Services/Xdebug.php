@@ -21,6 +21,10 @@ class Xdebug
     public function __construct(array $conf)
     {
         $this->conf = $conf;
+        if (!file_exists($this->conf['path_data'])) {
+            mkdir($this->conf['path_data'], 0744, true);
+        }
+
         $this->initDisplaySetting();
     }
 

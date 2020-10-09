@@ -279,7 +279,7 @@ if (!function_exists('svc_xdebug')) {
     {
         return App::singleton('service.xdebug', function ($app) {
             return new Xdebug([
-                'path_data' => $app['config.path_data'] . '/trace',
+                'path_data' => $app['config.path_data'] . '/xdebug_trace',
             ]);
         });
     }
