@@ -329,6 +329,8 @@ worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进�
 
 ## OPS 运维与开发
 
+推荐使用本框架的运维后台 [jdi-ops](https://github.com/muzk6/jdi-ops) 来分析日志
+
 ### XDebug Trace
 > 跟踪调试日志
 
