@@ -54,17 +54,6 @@ class Whitelist
     }
 
     /**
-     * 检查安全 IP 否则 404
-     */
-    public function checkSafeIpOrExit()
-    {
-        if (!$this->isSafeIp()) {
-            http_response_code(404);
-            exit;
-        }
-    }
-
-    /**
      * 当前用户是否在白名单内
      * @return bool
      */
@@ -78,17 +67,6 @@ class Whitelist
     }
 
     /**
-     * 检查安全用户否则 404
-     */
-    public function checkSafeUserIdOrExit()
-    {
-        if (!$this->isSafeUserId()) {
-            http_response_code(404);
-            exit;
-        }
-    }
-
-    /**
      * 是否包含白名单安全 Cookie
      * @return bool
      */
@@ -96,17 +74,6 @@ class Whitelist
     {
         $cookies = is_array($_COOKIE) ? $_COOKIE : [];
         return array_intersect(array_keys($cookies), $this->conf['cookie']) ? true : false;
-    }
-
-    /**
-     * 检查安全 Cookie 否则 404
-     */
-    public function checkSafeCookieOrExit()
-    {
-        if (!$this->isSafeCookie()) {
-            http_response_code(404);
-            exit;
-        }
     }
 
 }
