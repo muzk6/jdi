@@ -4,36 +4,33 @@
 ## 起步
 
 ```php
-$path_root = realpath(__DIR__); // 项目根目录
-require $path_root . '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 // 框架初始化
-\JDI\App::init([
-    'config.app_env' => 'dev', // 当前环境；dev 时回显错误信息
-    'config.path_config_first' => $path_root . '/vendor/muzk6/jdi/config/dev', // 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找
-    'config.path_config_second' => $path_root . '/vendor/muzk6/jdi/config/common', // 第二优先级配置目录
-    'config.path_view' => $path_root . '/vendor/muzk6/jdi/views', // 视图模板目录
-    'config.path_data' => $path_root . '/data', // 数据目录，目录必须有写权限
-    'config.init_handler' => null, // 容器初始化回调，为空时默认调用 \JDI\App::initHandler
-]);
+\JDI\App::init();
 
+// 注册路由
 route_get('/', function () {
     return 'Just Do It!';
 });
 
+// 分发路由
 svc_router()->dispatch();
 ```
 
-*上面的 `vendor/muzk6/jdi/` 里用到的目录，开发者可按需复制到自己的项目里修改*
+自定义配置：`\JDI\App::init(['config.debug' => false]);`
+
+其它配置项参考下表：
 
 配置项 | 默认值 | 描述
 --- | --- | ---
-config.app_env | dev | 环境
-config.path_data | <框架根目录>/data | 数据目录
-config.path_view | <框架根目录>/views | 视图模板目录
+config.debug | true | 调试开发模式，用于显示错误信息、关闭视图模板缓存、关闭 opcache、跳过白名单检查
+config.path_data | <jdi 根目录>/data | 数据目录
+config.path_view | <jdi 根目录>/views | 视图模板目录
 config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
 config.path_config_second | <空> | 第二优先级配置目录
-config.path_config_third | <框架根目录>/config | 第三优先级配置目录
+config.path_config_third | <jdi 根目录>/config | 第三优先级配置目录，一般默认即可，取框架的默认配置文件
+config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\App::initHandler
 
 ### 更多例子请 `cd` 到目录 `tests/feature`
 
@@ -176,8 +173,8 @@ d | double
 
 可以配置 MySQL, SQLite 等 PDO 支持的数据库
 
-- 配置文件 `config/.../mysql.php`
-- 用例参考 `tests/feature/db.php`
+- 配置文件 `config/mysql.php`
+- 用例参考 `tests/phpunit/Services/DBTest.php`
 
 如果想同时使用 SQLite 等数据库, 参考复制 `mysql.php` 为新的数据库配置文件，按需配置 dsn，再注册容器即可(参考 `services.php` `svc_mysql()`)
 
@@ -328,7 +325,7 @@ worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进�
 
 ### 配置
 
-`config/.../rabbitmq.php`
+`config/rabbitmq.php`
 
 ### 用例
 
@@ -346,16 +343,20 @@ worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进�
 ### XDebug Trace
 > 跟踪调试日志
 
-日志默认位于 `data/trace/`
+日志默认位于 `data/xdebug_trace/`
 
 *注意：请确保对 `data/` 目录有写权限*
+
+#### 依赖
+
+`ext-xdebug`
 
 #### 跟踪 fpm
 
 - 当前URL 主动开启: `/?_xt=name0`，`name0`是当前日志的标识名
 - Cookie 主动开启: `_xt=name0;`
 
-*注意：`URL`, `Cookie` 方式的前提必须先设置 `config/.../whitelist.php` 白名单 `IP` 或 白名单 `Cookie`*
+*注意：`URL`, `Cookie` 方式的前提必须先设置 `config/whitelist.php` 白名单 `IP` 或 白名单 `Cookie`*
 
 #### 跟踪 cli
 
@@ -369,12 +370,9 @@ worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进�
 
 #### 依赖
 
-- [扩展 tideways_xhprof](https://github.com/tideways/php-xhprof-extension/releases)
-- GUI - View Full Callgraph 功能，需要安装 `graphviz`
-    - Ubuntu: `sudo apt install graphviz`
-    - CentOS: `yum install graphviz`
+[扩展 tideways_xhprof](https://github.com/tideways/php-xhprof-extension/releases)
 
 #### 使用
 
-- 配置文件 `config/.../xhprof.php`
+- 配置文件 `config/xhprof.php`
 - `enable` 设置为 `1`, 即可记录大于指定耗时的请求

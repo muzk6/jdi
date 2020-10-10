@@ -1,6 +1,5 @@
 <?php
 
-use JDI\App;
 use JDI\Exceptions\AppException;
 use JDI\Services\Validator;
 
@@ -211,16 +210,6 @@ if (!function_exists('input')) {
     function input(string $field, $default = '', callable $after = null)
     {
         return svc_request()->input($field, $default, $after);
-    }
-}
-
-/**
- * 当前环境是否为开发环境
- */
-if (!function_exists('env_is_dev')) {
-    function env_is_dev()
-    {
-        return App::get('config.app_env') === 'dev';
     }
 }
 

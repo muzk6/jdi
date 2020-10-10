@@ -52,6 +52,7 @@ class App implements \ArrayAccess
                 $app[$key] = $value;
             }
 
+            isset($app['config.debug']) || $app['config.debug'] = true; // 调试开发模式
             isset($app['config.path_jdi']) || $app['config.path_jdi'] = realpath(__DIR__ . '/../'); // 框架根目录
             isset($app['config.path_data']) || $app['config.path_data'] = $app['config.path_jdi'] . '/data'; // 数据目录
             isset($app['config.path_view']) || $app['config.path_view'] = $app['config.path_jdi'] . '/views'; // 视图模板目录
@@ -110,7 +111,7 @@ class App implements \ArrayAccess
         date_default_timezone_set('PRC');
 
         // 环境配置
-        if ($app['config.app_env'] == 'env') {
+        if ($app['config.debug']) {
             ini_set('opcache.enable', 0);
             ini_set('opcache.enable_cli', 0);
 

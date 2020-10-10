@@ -145,7 +145,7 @@ if (!function_exists('svc_blade')) {
             return new Blade([
                 'path_view' => $app['config.path_view'],
                 'path_cache' => $app['config.path_data'] . '/view_cache',
-                'mode' => env_is_dev() ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO,
+                'mode' => $app['config.debug'] ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO,
             ]);
         });
     }
@@ -262,9 +262,9 @@ if (!function_exists('svc_whitelist')) {
      */
     function svc_whitelist()
     {
-        return App::singleton('service.whitelist', function () {
+        return App::singleton('service.whitelist', function ($app) {
             $inst = new Whitelist(svc_config()->get('whitelist'));
-            $inst->setIsSafe(env_is_dev());
+            $inst->setIsSafe($app['config.debug']);
 
             return $inst;
         });

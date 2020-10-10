@@ -5,6 +5,7 @@
  * php -S 0.0.0.0:8080 router_simple.php
  */
 
+use JDI\App;
 use JDI\Exceptions\AppException;
 
 require __DIR__ . '/../init.php';
@@ -21,7 +22,7 @@ route_get('/', function () {
  */
 route_group(function () {
     route_middleware(function () {
-        if (!env_is_dev()) {
+        if (!App::get('config.debug')) {
             http_response_code(404);
             exit;
         }
