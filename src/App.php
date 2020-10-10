@@ -44,21 +44,29 @@ class App implements \ArrayAccess
      */
     public static function init(array $values = [])
     {
-        if (!static::$app) {
-            static::$app = new static();
+        $app = &static::$app;
+        if (!$app) {
+            $app = new static();
 
             foreach ($values as $key => $value) {
-                static::$app[$key] = $value;
+                $app[$key] = $value;
             }
 
-            if (isset(static::$app['config.init_handler']) && is_callable(static::$app['config.init_handler'])) {
-                call_user_func(static::$app['config.init_handler'], static::$app);
+            isset($app['config.path_jdi']) || $app['config.path_jdi'] = realpath(__DIR__ . '/../'); // 框架根目录
+            isset($app['config.path_data']) || $app['config.path_data'] = $app['config.path_jdi'] . '/data'; // 数据目录
+            isset($app['config.path_view']) || $app['config.path_view'] = $app['config.path_jdi'] . '/views'; // 视图模板目录
+            isset($app['config.path_config_first']) || $app['config.path_config_first'] = ''; // 第一优先级配置目录
+            isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
+            isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
+
+            if (isset($app['config.init_handler']) && is_callable($app['config.init_handler'])) {
+                call_user_func($app['config.init_handler'], $app);
             } else {
-                static::$app->initHandler(static::$app);
+                $app->initHandler($app);
             }
         }
 
-        return static::$app;
+        return $app;
     }
 
     /**

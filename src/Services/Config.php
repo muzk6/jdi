@@ -25,6 +25,11 @@ class Config
     protected $path_config_second;
 
     /**
+     * @var string 第三优先级配置目录，一般为库的默认配置目录
+     */
+    protected $path_config_third;
+
+    /**
      * Config constructor.
      * @param array $conf
      */
@@ -32,6 +37,7 @@ class Config
     {
         $this->path_config_first = $conf['path_config_first'];
         $this->path_config_second = $conf['path_config_second'];
+        $this->path_config_third = $conf['path_config_third'];
     }
 
     /**
@@ -43,9 +49,11 @@ class Config
     {
         $config = &$this->config[$filename];
         if (!isset($config)) {
-            if (is_file($path = "{$this->path_config_first}/{$filename}.php")) {
+            if ($this->path_config_first && is_file($path = "{$this->path_config_first}/{$filename}.php")) {
                 $config = include($path);
-            } else if ($this->path_config_second && is_file($path = "{$this->path_config_second}/{$filename}.php")) {
+            } elseif ($this->path_config_second && is_file($path = "{$this->path_config_second}/{$filename}.php")) {
+                $config = include($path);
+            } elseif ($this->path_config_third && is_file($path = "{$this->path_config_third}/{$filename}.php")) {
                 $config = include($path);
             } else {
                 return false;

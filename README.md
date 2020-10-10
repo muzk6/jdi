@@ -26,6 +26,15 @@ svc_router()->dispatch();
 
 *上面的 `vendor/muzk6/jdi/` 里用到的目录，开发者可按需复制到自己的项目里修改*
 
+配置项 | 默认值 | 描述
+--- | --- | ---
+config.app_env | dev | 环境
+config.path_data | <框架根目录>/data | 数据目录
+config.path_view | <框架根目录>/views | 视图模板目录
+config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
+config.path_config_second | <空> | 第二优先级配置目录
+config.path_config_third | <框架根目录>/config | 第三优先级配置目录
+
 ### 更多例子请 `cd` 到目录 `tests/feature`
 
 - 简单路由 `php -S 0.0.0.0:8080 router_simple.php`
@@ -177,8 +186,11 @@ d | double
 #### `config()` 配置文件
 
 - `config('app.lang')`
-- 假设当前环境是`dev`，第一、二优先级分别目录是 `config/dev/, config/common/`
-- 依次搜索`config/dev/app.php, config/common/app.php`, 存在时返回第一个结果文件的内容
+- 例如第一、二优先级目录分别是 `config/dev/`, `config/common/`
+- 依次搜索下面文件，存在时返回第一个结果的文件内容：
+    - `config/dev/app.php`
+    - `config/common/app.php`
+    - `vendor/muzk6/jdi/config/app.php`
 - `config(['app.lang' => 'en'])`设置 run-time 的配置
 
 #### `trans()` 多语言文本

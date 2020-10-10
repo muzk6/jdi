@@ -29,6 +29,7 @@ if (!function_exists('svc_config')) {
             return new Config([
                 'path_config_first' => $app['config.path_config_first'], // 第一优先级配置目录
                 'path_config_second' => $app['config.path_config_second'], // 第二优先级配置目录
+                'path_config_third' => $app['config.path_config_third'], // 第三优先级配置目录，一般为库的默认配置目录
             ]);
         });
     }
