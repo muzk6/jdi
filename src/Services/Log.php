@@ -9,11 +9,11 @@ class Log
     /**
      * @var string 日志路径
      */
-    protected $path;
+    protected $path_data;
 
     public function __construct(array $conf)
     {
-        $this->path = $conf['path_data'];
+        $this->path_data = $conf['path_data'];
     }
 
     /**
@@ -44,7 +44,7 @@ class Log
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
 
         $path = sprintf('%s/%s_%s.log',
-            $this->path, $filename, date('Ym'));
+            $this->path_data, $filename, date('Ym'));
 
         return file_put_contents($path, $log . PHP_EOL, FILE_APPEND);
     }

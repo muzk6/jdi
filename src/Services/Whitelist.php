@@ -10,13 +10,28 @@ namespace JDI\Services;
 class Whitelist
 {
     /**
-     * @var array 配置文件，格式 core/AppWhitelist.php
+     * 支持网络号位数格式，例如 0.0.0.0/0 表示所有 IP
+     * @var array
      */
-    protected $conf;
+    protected $ip;
+
+    /**
+     * 请求时带上白名单 Cookie. 判断逻辑为 isset($_COOKIE[...])
+     * @var array
+     */
+    protected $cookie;
+
+    /**
+     * 当前登录的用户 ID
+     * @var array
+     */
+    protected $user_id;
 
     public function __construct(array $conf)
     {
-        $this->conf = $conf;
+        $this->ip = $conf['ip'];
+        $this->cookie = $conf['cookie'];
+        $this->user_id = $conf['user_id'];
     }
 
     /**
@@ -28,7 +43,7 @@ class Whitelist
         $client_ip_str = get_client_ip();
         $client_ip = ip2long($client_ip_str);
 
-        foreach ($this->conf['ip'] as $v) {
+        foreach ($this->ip as $v) {
 
             if (strpos($v, '/') === false) {
                 if ($v == $client_ip_str) {
@@ -63,7 +78,7 @@ class Whitelist
             return false;
         }
 
-        return in_array(svc_auth()->getUserId(), $this->conf['user_id']);
+        return in_array(svc_auth()->getUserId(), $this->user_id);
     }
 
     /**
@@ -73,7 +88,7 @@ class Whitelist
     public function isSafeCookie()
     {
         $cookies = is_array($_COOKIE) ? $_COOKIE : [];
-        return array_intersect(array_keys($cookies), $this->conf['cookie']) ? true : false;
+        return array_intersect(array_keys($cookies), $this->cookie) ? true : false;
     }
 
 }

@@ -10,6 +10,9 @@ namespace JDI\Services;
  */
 class CURL
 {
+    /**
+     * @var false|resource cURL 句柄
+     */
     protected $ch;
 
     public function __construct()

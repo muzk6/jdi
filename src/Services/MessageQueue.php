@@ -15,12 +15,12 @@ use PhpAmqpLib\Message\AMQPMessage;
 class MessageQueue
 {
     /**
-     * @var AMQPStreamConnection
+     * @var AMQPStreamConnection 链接资源
      */
     protected $connection;
 
     /**
-     * @var AMQPChannel[]
+     * @var AMQPChannel[] 通道对象集合
      */
     protected $channels = [];
 

@@ -9,15 +9,35 @@ namespace JDI\Services;
  */
 class XHProf
 {
-    protected $conf;
+    /**
+     * @var int 开关
+     */
+    protected $enable;
 
+    /**
+     * @var double 采样概率，1=100%
+     */
+    protected $probability;
+
+    /**
+     * @var double 最小耗时，单位秒，超时则记录否则跳过
+     */
+    protected $min_time;
+
+    /**
+     * @var string 数据目录
+     */
+    protected $path_data;
+
+    /**
+     * @var double 统计开始时间
+     */
     protected $start_time;
 
     public function __construct(array $conf)
     {
-        $this->conf = $conf;
-        if (!file_exists($this->conf['path_data'])) {
-            mkdir($this->conf['path_data'], 0744, true);
+        if (!file_exists($this->path_data)) {
+            mkdir($this->path_data, 0744, true);
         }
     }
 
@@ -27,11 +47,11 @@ class XHProf
      */
     public function auto()
     {
-        if (empty($this->conf['enable'])) {
+        if (empty($this->enable)) {
             return false;
         }
 
-        if (!(mt_rand(1, 100) <= $this->conf['probability'] * 100)) {
+        if (!(mt_rand(1, 100) <= $this->probability * 100)) {
             return false;
         }
 
@@ -68,11 +88,11 @@ class XHProf
     {
         $end_time = microtime(true);
         $cost_time = $end_time - $this->start_time;
-        if ($cost_time < $this->conf['min_time']) {
+        if ($cost_time < $this->min_time) {
             return false;
         }
 
-        $path = $this->conf['path_data'];
+        $path = $this->path_data;
         if (!file_exists($path)) {
             mkdir($path, 0744, true);
         }

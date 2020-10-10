@@ -35,8 +35,8 @@ class Config
      */
     public function __construct(array $conf)
     {
-        $this->path_config_first = $conf['path_config_first'];
-        $this->path_config_second = $conf['path_config_second'];
+        $this->path_config_first = $conf['path_config_first'] ?? '';
+        $this->path_config_second = $conf['path_config_second'] ?? '';
         $this->path_config_third = $conf['path_config_third'];
     }
 
