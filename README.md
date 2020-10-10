@@ -36,7 +36,7 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
 
 - 简单路由 `php -S 0.0.0.0:8080 router_simple.php`
 - 中间件与路由 `php -S 0.0.0.0:8080 router_advanced.php`
-- 经典MVC `php -S 0.0.0.0:8080 router_mvc.php`
+- 经典 MVC `php -S 0.0.0.0:8080 router_mvc.php`
 
 ## 规范建议
 > 仅仅建议

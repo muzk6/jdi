@@ -14,15 +14,22 @@ class Xdebug
     protected $max_children;
 
     /**
-     * @var array
+     * @var string 数据目录
      */
-    protected $conf;
+    protected $path_data;
+
+    /**
+     * @var bool true 时跳过白名单限制
+     */
+    protected $debug;
 
     public function __construct(array $conf)
     {
-        $this->conf = $conf;
-        if (!file_exists($this->conf['path_data'])) {
-            mkdir($this->conf['path_data'], 0744, true);
+        $this->path_data = $conf['path_data'];
+        $this->debug = $conf['debug'] ?? false;
+
+        if (!file_exists($this->path_data)) {
+            mkdir($this->path_data, 0744, true);
         }
 
         $this->initDisplaySetting();
@@ -83,7 +90,7 @@ class Xdebug
         $name = '';
 
         // 从 cgi 开启
-        if (svc_whitelist()->isSafeIp() || svc_whitelist()->isSafeCookie()) {
+        if ($this->debug || svc_whitelist()->isSafeIp() || svc_whitelist()->isSafeCookie()) {
             if (isset($_REQUEST['_xt'])) {
                 $name = $_REQUEST['_xt'];
             } elseif (isset($_COOKIE['_xt'])) {
@@ -100,7 +107,7 @@ class Xdebug
         }
 
         // 从 cli/trace.php 开启
-        $trace_conf_file = $this->conf['path_data'] . '/.tracerc';
+        $trace_conf_file = $this->path_data . '/.tracerc';
         if (!$trace_start && file_exists($trace_conf_file)) {
             $trace_conf = include($trace_conf_file);
 
@@ -138,8 +145,8 @@ class Xdebug
             return false;
         }
 
-        if (!file_exists($this->conf['path_data'])) {
-            mkdir($this->conf['path_data'], 0744, true);
+        if (!file_exists($this->path_data)) {
+            mkdir($this->path_data, 0744, true);
         }
 
         ini_set('xdebug.var_display_max_depth', $this->max_depth);
@@ -180,7 +187,7 @@ class Xdebug
             xdebug_stop_trace();
         });
 
-        xdebug_start_trace($this->conf['path_data'] . '/' . $trace_filename);
+        xdebug_start_trace($this->path_data . '/' . $trace_filename);
 
         return true;
     }

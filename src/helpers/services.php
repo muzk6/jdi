@@ -263,10 +263,7 @@ if (!function_exists('svc_whitelist')) {
     function svc_whitelist()
     {
         return App::singleton('service.whitelist', function ($app) {
-            $inst = new Whitelist(svc_config()->get('whitelist'));
-            $inst->setIsSafe($app['config.debug']);
-
-            return $inst;
+            return new Whitelist(svc_config()->get('whitelist'));
         });
     }
 }
@@ -281,6 +278,7 @@ if (!function_exists('svc_xdebug')) {
         return App::singleton('service.xdebug', function ($app) {
             return new Xdebug([
                 'path_data' => $app['config.path_data'] . '/xdebug_trace',
+                'debug' => $app['config.debug'], // true 时跳过白名单限制
             ]);
         });
     }

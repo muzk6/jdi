@@ -14,23 +14,9 @@ class Whitelist
      */
     protected $conf;
 
-    /**
-     * @var bool 是否为安全环境
-     */
-    protected $is_safe = false;
-
     public function __construct(array $conf)
     {
         $this->conf = $conf;
-    }
-
-    /**
-     * 设置为安全环境
-     * @param bool $is_safe
-     */
-    public function setIsSafe(bool $is_safe = true)
-    {
-        $this->is_safe = $is_safe;
     }
 
     /**
@@ -39,10 +25,6 @@ class Whitelist
      */
     public function isSafeIp()
     {
-        if ($this->is_safe) {
-            return true;
-        }
-
         $client_ip_str = get_client_ip();
         $client_ip = ip2long($client_ip_str);
 
@@ -88,10 +70,6 @@ class Whitelist
      */
     public function isSafeUserId()
     {
-        if ($this->is_safe) {
-            return true;
-        }
-
         if (!svc_auth()->isLogin()) {
             return false;
         }
@@ -116,10 +94,6 @@ class Whitelist
      */
     public function isSafeCookie()
     {
-        if ($this->is_safe) {
-            return true;
-        }
-
         $cookies = is_array($_COOKIE) ? $_COOKIE : [];
         return array_intersect(array_keys($cookies), $this->conf['cookie']) ? true : false;
     }

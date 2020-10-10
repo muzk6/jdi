@@ -6,6 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
+    protected static $display_errors;
+
+    public static function setUpBeforeClass()
+    {
+        self::$display_errors = ini_get('display_errors');
+        ini_set('display_errors', 0);
+    }
+
+    public static function tearDownAfterClass()
+    {
+        ini_set('display_errors', self::$display_errors);
+    }
+
     public function testExists()
     {
         $this->assertEquals(true, svc_config()->exists('lang_en'));

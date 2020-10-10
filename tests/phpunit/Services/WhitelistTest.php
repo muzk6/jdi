@@ -23,17 +23,6 @@ class WhitelistTest extends TestCase
         ]));
     }
 
-    public function testSetIsSafe()
-    {
-        svc_whitelist()->setIsSafe(true);
-
-        $this->assertEquals(true, svc_whitelist()->isSafeIp());
-        $this->assertEquals(true, svc_whitelist()->isSafeCookie());
-        $this->assertEquals(true, svc_whitelist()->isSafeUserId());
-
-        svc_whitelist()->setIsSafe(false);
-    }
-
     public function testIsSafeUserId()
     {
         svc_auth()->login(1010);
