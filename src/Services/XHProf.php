@@ -36,6 +36,11 @@ class XHProf
 
     public function __construct(array $conf)
     {
+        $this->enable = $conf['enable'];
+        $this->probability = $conf['probability'];
+        $this->min_time = $conf['min_time'];
+        $this->path_data = $conf['path_data'];
+
         if (!file_exists($this->path_data)) {
             mkdir($this->path_data, 0744, true);
         }
