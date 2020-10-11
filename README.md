@@ -38,11 +38,11 @@ svc_router()->dispatch();
 配置项 | 默认值 | 描述
 --- | --- | ---
 config.debug | true | 调试开发模式，用于显示错误信息、关闭视图模板缓存、关闭 opcache
-config.path_data | <jdi 根目录>/data | 数据目录
-config.path_view | <jdi 根目录>/views | 视图模板目录
+config.path_data | <jdi根目录>/data | 数据目录
+config.path_view | <jdi根目录>/views | 视图模板目录
 config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
 config.path_config_second | <空> | 第二优先级配置目录
-config.path_config_third | <jdi 根目录>/config | 第三优先级配置目录，一般默认即可，取框架的默认配置文件
+config.path_config_third | <jdi根目录>/config | 第三优先级配置目录，一般默认即可，取框架的默认配置文件
 config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\App::initHandler
 
 ### 更多例子请 `cd` 到目录 `tests/feature`
