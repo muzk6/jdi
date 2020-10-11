@@ -1,8 +1,17 @@
 # [jdi](https://github.com/muzk6/jdi.git)
-> PHP 框架 —— Just Do It
+> PHP 框架 —— Just Do It<br>
+相关项目：<br>
+[jdi-ops: JDI 框架的 OPS 运维后台](https://github.com/muzk6/jdi-ops)
 
 ## 起步
 
+### 安装
+
+`composer require muzk6/jdi`
+
+### 基本用例
+
+*index.php*
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
@@ -18,13 +27,17 @@ route_get('/', function () {
 svc_router()->dispatch();
 ```
 
+开启服务：`php -S 0.0.0.0:8080 index.php`
+
+### 参数配置
+
 自定义配置：`\JDI\App::init(['config.debug' => false]);`
 
 其它配置项参考下表：
 
 配置项 | 默认值 | 描述
 --- | --- | ---
-config.debug | true | 调试开发模式，用于显示错误信息、关闭视图模板缓存、关闭 opcache、跳过白名单检查
+config.debug | true | 调试开发模式，用于显示错误信息、关闭视图模板缓存、关闭 opcache
 config.path_data | <jdi 根目录>/data | 数据目录
 config.path_view | <jdi 根目录>/views | 视图模板目录
 config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
@@ -61,7 +74,7 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
 ```php
 route_get('/demo/xhr', function () {
     // 返回 state:false 的 json
-    panic('失败消息'); // 这里抛出 AppException 异常，相当于 return api_json(true, [], '失败消息');
+    panic('失败消息'); // 这里抛出 AppException 异常，相当于 return api_json(false, [], '失败消息');
 
     // 返回 state:true 的 json 内容
     $data = ['key1' => 'val1'];
@@ -213,9 +226,9 @@ d | double
 
 #### `panic()` 直接抛出业务异常对象
 
+- `panic(10001000)` 等于 `new AppException('10001000')` 自动转为错误码对应的文本
 - `panic('foo')` 等于 `new AppException('foo')`
 - `panic('foo', ['bar'])` 等于 `new (AppException('foo'))->setData(['bar'])`
-- `panic(10001000)` 等于 `new AppException('10001000')` 自动转为错误码对应的文本
 
 `AppException` 异常属于业务逻辑，能够作为提示通过接口返回给用户看，而其它异常则不会(安全考虑)
 
@@ -248,10 +261,10 @@ d | double
 
 - `api_format(true, ['foo' => 1])` 格式化为成功的内容结构 array
 - `api_format($exception)` 格式化异常对象为失败的内容结构 array
-- `api_json()`, `api_format()` 用法一样，区别是返回 string-json
+- `api_json()`, `api_format()` 用法一样，区别是前者返回 string-json
 - `api_success()`, `api_error()` 是 `api_json()` 的简写
 
-*成功提示，在控制器 action 里的等价写法如下：*
+#### 成功提示
 
 ```json
 {
@@ -264,16 +277,15 @@ d | double
 }
 ```
 
+路由里等价写法如下：
+
 ```php
-public function successAciton()
-{
-    return ['foo' => 1]; // 只能返回消息体 d
-    return api_success('我是成功消息', 0, ['foo' => 1]); // 支持返回 c, m ,d; 一般用于方便返回纯 m, 例如 api_success('我是成功消息');
-    return api_json(true, ['foo' => 1]); // 支持返回 s, c, m ,d
-}
+return ['foo' => 1]; // 只能返回消息体 d
+return api_success('', 0, ['foo' => 1]); // 一般用于方便返回纯 m, 例如 api_success('我是成功消息');
+return api_json(true, ['foo' => 1]);
 ```
 
-*错误提示等价写法如下：*
+#### 错误提示
 
 ```json
 {
@@ -286,13 +298,12 @@ public function successAciton()
 }
 ```
 
+路由里等价写法如下：
+
 ```php
-public function errorAciton()
-{
-    panic('我是失败消息', ['foo' => 1]); // 直接抛出异常，不用 return, 如果使用错误码，错误码必须存在于 `lang/` 配置里
-    return api_error('我是失败消息', 0, ['foo' => 1]); // 支持返回 c, m ,d; 可自由指定错误码
-    return api_json(false, ['foo' => 1]); // 支持返回 s, c, m ,d
-}
+panic('我是失败消息', ['foo' => 1]); // 直接抛出异常，不用 return; 另一种便捷的用法是 panic(10001000);
+return api_error('我是失败消息', 0, ['foo' => 1]); // 可自由指定错误码
+return api_json(false, ['foo' => 1]);
 ```
 
 #### `assign()`, `view()` 模板与变量
