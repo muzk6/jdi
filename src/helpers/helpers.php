@@ -142,7 +142,7 @@ if (!function_exists('api_msg')) {
      * @param string $message 消息体
      * @return string
      */
-    function api_msg(string $message = '')
+    function api_msg(string $message)
     {
         return api_json(true, [], $message, 0);
     }
