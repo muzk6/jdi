@@ -136,31 +136,15 @@ if (!function_exists('api_json')) {
     }
 }
 
-if (!function_exists('api_success')) {
+if (!function_exists('api_msg')) {
     /**
-     * 成功状态的 api_json()
+     * 输出成功状态的消息体
      * @param string $message 消息体
-     * @param int $code 消息码
-     * @param array $data 对象体
      * @return string
      */
-    function api_success(string $message = '', int $code = 0, array $data = [])
+    function api_msg(string $message = '')
     {
-        return api_json(true, $data, $message, $code);
-    }
-}
-
-if (!function_exists('api_error')) {
-    /**
-     * 失败状态的 api_json()
-     * @param string $message 消息体
-     * @param int $code 消息码
-     * @param array $data 对象体
-     * @return string
-     */
-    function api_error(string $message = '', int $code = 0, array $data = [])
-    {
-        return api_json(false, $data, $message, $code);
+        return api_json(true, [], $message, 0);
     }
 }
 
@@ -617,7 +601,7 @@ if (!function_exists('route_middleware')) {
 
 if (!function_exists('route_group')) {
     /**
-     * 路由分组
+     * 路由分组，隔离中间件
      * @param callable $fn
      */
     function route_group(callable $fn)

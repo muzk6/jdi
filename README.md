@@ -68,21 +68,42 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
     - `route_post_re()` 正则匹配 
 - `route_any()` 注册回调任何请求
     - `route_any_re()` 正则匹配
-- `route_middleware()` 注册路由中间件
-- `route_group()` 路由分组
+- `route_middleware()` 注册路由中间件，顺序执行，组内优先
+- `route_group()` 路由分组，隔离中间件
+
+### 用例
 
 ```php
-route_get('/demo/xhr', function () {
-    // 返回 state:false 的 json
-    panic('失败消息'); // 这里抛出 AppException 异常，相当于 return api_json(false, [], '失败消息');
-
-    // 返回 state:true 的 json 内容
-    $data = ['key1' => 'val1'];
-    return $data; // 直接返回数组，相当于 return api_json(true, $data);
-    
-    // 原样输出文本
-    return 'hello world'; // 返回非数组，直接原样输出文本，一般用于返回 view() 来输出 html 网页
+route_middleware(function () {
+    echo '中间件a1';
 });
+
+route_middleware(function () {
+    echo '中间件a2';
+});
+
+route_group(function () {
+    route_middleware(function () {
+        echo '中间件b1';
+    });
+
+    route_get('/', function () {
+        return 'Just Do It!';
+    });
+});
+
+route_middleware(function () {
+    echo '中间件a3';
+});
+```
+
+输出如下：
+```
+中间件b1
+中间件a1
+中间件a2
+Just Do It!
+中间件a3
 ```
 
 ## 请求参数
@@ -182,6 +203,21 @@ a | array
 f | float
 d | double
 
+## 响应内容
+
+在路由回调里使用
+
+- `return ['foo' => 1];` { "s": true, "c": 0, "m": "", "d": { "foo": 1 } }
+- `return api_msg('保存成功');` { "s": true, "c": 0, "m": "保存成功", "d": {} }
+- `panic('保存失败');` { "s": false, "c": 0, "m": "保存失败", "d": {} }
+- `panic('保存失败', ['foo' => 1]);` { "s": false, "c": 0, "m": "保存失败", "d": { "foo": 1 } }
+- `panic(10001000);` { "s": false, "c": 10001000, "m": "参数错误", "d": {} }; 参考翻译文件 lang_zh_CN.php
+- `panic([10002001, 'name' => 'tom']);`  { "s": false, "c": 10002001, "m": "欢迎 tom", "d": {} }
+
+以上方式都是 `return api_json()` 的衍生，更多需求可直接调用 `api_json()`
+
+其中与 `api_format()` 的关系是：`api_json()` 即 `json_encode(api_format())`
+
 ## PDO 数据库
 
 可以配置 MySQL, SQLite 等 PDO 支持的数据库
@@ -226,7 +262,7 @@ d | double
 
 #### `panic()` 直接抛出业务异常对象
 
-- `panic(10001000)` 等于 `throw new AppException('10001000')` 自动转为错误码对应的文本
+- `panic(10001000)` 等于 `throw new AppException('10001000')` 自动转为错误码对应的文本，参考翻译文件 lang_zh_CN.php
 - `panic('foo')` 等于 `throw new AppException('foo')`
 - `panic('foo', ['bar'])` 等于 `throw (new AppException('foo'))->setData(['bar'])`
 
@@ -256,55 +292,6 @@ d | double
 - `flash_exists(string $key)` 闪存是否存在，即使值为 null
 - `flash_get(string $key)` 闪存获取并删除
 - `flash_del(string $key)` 闪存删除
-
-#### `api_format()`, `api_json()` 格式化为接口输出的内容结构
-
-- `api_format(true, ['foo' => 1])` 格式化为成功的内容结构 array
-- `api_format($exception)` 格式化异常对象为失败的内容结构 array
-- `api_json()`, `api_format()` 用法一样，区别是前者返回 string-json
-- `api_success()`, `api_error()` 是 `api_json()` 的简写
-
-#### 成功提示
-
-```json
-{
-    "s": true,
-    "c": 0,
-    "m": "",
-    "d": {
-        "foo": 1
-    }
-}
-```
-
-路由里等价写法如下：
-
-```php
-return ['foo' => 1]; // 只能返回消息体 d
-return api_success('', 0, ['foo' => 1]); // 一般用于方便返回纯 m, 例如 api_success('我是成功消息');
-return api_json(true, ['foo' => 1]);
-```
-
-#### 错误提示
-
-```json
-{
-    "s": false,
-    "c": 0,
-    "m": "我是失败消息",
-    "d": {
-        "foo": 1
-    }
-}
-```
-
-路由里等价写法如下：
-
-```php
-panic('我是失败消息', ['foo' => 1]); // 直接抛出异常，不用 return; 另一种便捷的用法是 panic(10001000);
-return api_error('我是失败消息', 0, ['foo' => 1]); // 可自由指定错误码
-return api_json(false, ['foo' => 1]);
-```
 
 #### `assign()`, `view()` 模板与变量
 
