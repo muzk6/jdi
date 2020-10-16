@@ -85,7 +85,7 @@ class AppPDO
                 }
             }
 
-            logfile('sql', $sql_log, 'sql');
+            svc_log()->file('sql', $sql_log, 'sql');
         }
 
         return $sql;

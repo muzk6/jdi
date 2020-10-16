@@ -21,11 +21,12 @@ class Log
      * @param string $index 日志名(索引)
      * @param array|string $data 日志内容
      * @param string $filename 日志文件名前缀
+     * @param int $trace_index 调用处堆栈索引
      * @return int|null
      */
-    public function file(string $index, $data, string $filename = 'app')
+    public function file(string $index, $data, string $filename = 'app', $trace_index = 0)
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $trace_index + 1)[$trace_index];
         $filename = trim(str_replace('/', '', $filename));
 
         $log = json_encode([
@@ -35,9 +36,10 @@ class Log
             'file' => "{$trace['file']}:{$trace['line']}",
             'sapi' => PHP_SAPI,
             'hostname' => php_uname('n'),
-            'url' => $_SERVER['REQUEST_URI'] ?? '',
             'method' => $_SERVER['REQUEST_METHOD'] ?? '',
-            'ip' => get_client_ip(),
+            'host' => $_SERVER['HTTP_HOST'] ?? '',
+            'url' => $_SERVER['REQUEST_URI'] ?? '',
+            'client_ip' => get_client_ip(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'user_id' => svc_auth()->getUserId(),
             'data' => $data,
