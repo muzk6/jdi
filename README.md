@@ -314,8 +314,8 @@ svc_auth()->logout(); // 退出登录
 
 ## 消息队列
 
-worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进程。
-如果要强行结束可使用信号 `SIGKILL`, 命令为 `kill -s KILL <PID>`
+- worker 遇到信号 `SIGTERM`, `SIGHUP`, `SIGINT`, `SIGQUIT` 会平滑结束进程。如果要强行结束可使用信号 `SIGKILL`, 命令为 `kill -s KILL <PID>`
+- 当文件有变动时，队列有消息会触发 worker 退出，因此需要以守护进程方式启动 worker, 建议生产环境使用 supervisor 服务，临时测试可用 `watch` 命令启动 worker 
 
 ### 依赖
 
