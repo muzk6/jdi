@@ -4,6 +4,7 @@
 namespace JDI\Services;
 
 use JDI\Exceptions\AppException;
+use JDI\Support\Utils;
 
 /**
  * 路由注册器
@@ -184,12 +185,12 @@ class Router
 
                         $out = call_user_func($route_value['action']);
                         if (is_array($out)) {
-                            echo api_json(true, $out);
+                            echo Utils::api_json(true, $out);
                         } else {
                             echo strval($out);
                         }
                     } catch (AppException $app_exception) {
-                        echo api_json($this->app_exception = $app_exception);
+                        echo Utils::api_json($this->app_exception = $app_exception);
                     }
 
                     return;

@@ -3,6 +3,8 @@
 
 namespace JDI\Services;
 
+use JDI\Support\Utils;
+
 /**
  * 白名单
  * @package JDI\Services
@@ -40,7 +42,7 @@ class Whitelist
      */
     public function isSafeIp()
     {
-        $client_ip_str = get_client_ip();
+        $client_ip_str = Utils::get_client_ip();
         $client_ip = ip2long($client_ip_str);
 
         foreach ($this->ip as $v) {

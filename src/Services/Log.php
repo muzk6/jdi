@@ -4,6 +4,8 @@
 namespace JDI\Services;
 
 
+use JDI\Support\Utils;
+
 class Log
 {
     /**
@@ -39,7 +41,7 @@ class Log
             'method' => $_SERVER['REQUEST_METHOD'] ?? '',
             'host' => $_SERVER['HTTP_HOST'] ?? '',
             'url' => $_SERVER['REQUEST_URI'] ?? '',
-            'client_ip' => get_client_ip(),
+            'client_ip' => Utils::get_client_ip(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'user_id' => svc_auth()->getUserId(),
             'data' => $data,

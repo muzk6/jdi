@@ -15,7 +15,7 @@
         "ext-json": "*"
     },
     "autoload": {
-        "files": ["src/helpers/helpers.php", "src/helpers/services.php"],
+        "files": ["src/Support/helpers.php", "src/Support/services.php"],
         "psr-4": {
             "JDI\\": "src/",
             "JDI\\Tests\\": "tests/phpunit/"

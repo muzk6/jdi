@@ -2,6 +2,7 @@
 
 use JDI\Exceptions\AppException;
 use JDI\Services\Validator;
+use JDI\Support\Utils;
 
 if (!function_exists('config')) {
     /**
@@ -80,31 +81,7 @@ if (!function_exists('api_format')) {
      */
     function api_format($state, array $data = [], string $message = '', int $code = 0)
     {
-        $body = [
-            's' => false,
-            'c' => $code,
-            'm' => $message,
-            'd' => $data,
-        ];
-
-        if ($state instanceof Exception) {
-            $exception = $state;
-
-            empty($code) && $body['c'] = $exception->getCode();
-            empty($message) && $body['m'] = $exception->getMessage();
-
-            if (empty($body['d']) && ($exception instanceof AppException)) {
-                $body['d'] = $exception->getData();
-            }
-        } else {
-            $body['s'] = boolval($state);
-        }
-
-        $body['s'] = boolval($body['s']);
-        $body['c'] = intval($body['c']);
-        $body['m'] = strval($body['m']);
-
-        return $body;
+        return Utils::api_format($state, $data, $message, $code);
     }
 }
 
@@ -119,20 +96,7 @@ if (!function_exists('api_json')) {
      */
     function api_json($state, array $data = [], string $message = '', int $code = 0)
     {
-        // 先刷出 buffer, 避免被后面的 header 影响
-        if (ob_get_status()) {
-            ob_flush();
-            flush();
-        }
-
-        headers_sent() || header('Content-Type: application/json; Charset=UTF-8');
-
-        $body = api_format($state, $data, $message, $code);
-        if (empty($body['d'])) {
-            $body['d'] = new stdClass();
-        }
-
-        return json_encode($body);
+        return Utils::api_json($state, $data, $message, $code);
     }
 }
 
@@ -144,7 +108,7 @@ if (!function_exists('api_msg')) {
      */
     function api_msg(string $message)
     {
-        return api_json(true, [], $message, 0);
+        return Utils::api_json(true, [], $message, 0);
     }
 }
 
@@ -273,33 +237,7 @@ if (!function_exists('url')) {
      */
     function url($path, array $params = [], bool $secure = false)
     {
-        if (is_array($path)) {
-            if (count($path) !== 2) {
-                trigger_error("正确用法：url(['test', '/path/to'])", E_USER_ERROR);
-            }
-
-            list($alias, $path) = $path;
-            $conf = svc_config()->get('url');
-            if (!isset($conf[$alias])) {
-                trigger_error("url.php 不存在配置项: {$alias}", E_USER_ERROR);
-            }
-
-            $host = $conf[$alias];
-        } else {
-            $host = $_SERVER['HTTP_HOST'] ?? '';
-        }
-
-        if ($host) {
-            $protocol = $secure ? 'https://' : 'http://';
-            $host = $protocol . $host;
-        }
-
-        if ($params) {
-            $path .= strpos($path, '?') !== false ? '&' : '?';
-            $path .= http_build_query($params);
-        }
-
-        return $host . $path;
+        return Utils::url($path, $params, $secure);
     }
 }
 
@@ -310,28 +248,7 @@ if (!function_exists('get_client_ip')) {
      */
     function get_client_ip()
     {
-        $ip = '';
-        if (isset($_SERVER['HTTP_CDN_SRC_IP'])) {
-            $ip = $_SERVER['HTTP_CDN_SRC_IP'];
-        } elseif (isset($_SERVER['HTTP_CLIENT_IP'])
-            && preg_match('/^([0-9]{1,3}\.){3}[0-9]{1,3}$/', trim($_SERVER['HTTP_CLIENT_IP']))) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-            && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', trim($_SERVER['HTTP_X_FORWARDED_FOR']), $matches)) {
-            foreach ($matches[0] AS $xip) {
-                $xip = trim($xip);
-                if (filter_var($xip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
-                    $ip = $xip;
-                    break;
-                }
-            }
-        } elseif (isset($_SERVER['HTTP_X_REAL_IP'])) {
-            $ip = $_SERVER['HTTP_X_REAL_IP'];
-        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-
-        return filter_var(trim($ip), FILTER_VALIDATE_IP) ?: '';
+        return Utils::get_client_ip();
     }
 }
 

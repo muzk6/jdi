@@ -4,6 +4,8 @@
 namespace JDI\Services;
 
 
+use JDI\Support\Utils;
+
 /**
  * CURL 简单封装
  * @package JDI\Services
@@ -38,7 +40,7 @@ class CURL
     public function post($url, array $data = [], array $headers = [], int $connect_timeout = 3)
     {
         if (is_array($url)) {
-            $url = url($url);
+            $url = Utils::url($url);
         }
 
         curl_reset($this->ch);
@@ -80,7 +82,7 @@ class CURL
     public function get($url, array $data = [], array $headers = [], int $connect_timeout = 3)
     {
         if (is_array($url)) {
-            $url = url($url);
+            $url = Utils::url($url);
         }
 
         if ($data) {
