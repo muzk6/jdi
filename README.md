@@ -38,7 +38,7 @@ svc_router()->dispatch();
 配置项 | 默认值 | 描述
 --- | --- | ---
 config.debug | true | 调试开发模式，用于显示错误信息、关闭视图模板缓存、关闭 opcache
-config.path_data | <jdi 根目录>/data | 数据目录
+config.path_data | <jdi 根目录>/data | 数据目录，保证有写权限
 config.path_view | <jdi 根目录>/views | 视图模板目录
 config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
 config.path_config_second | <空> | 第二优先级配置目录
