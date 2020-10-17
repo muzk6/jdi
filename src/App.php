@@ -59,6 +59,7 @@ class App implements \ArrayAccess
             isset($app['config.path_config_first']) || $app['config.path_config_first'] = ''; // 第一优先级配置目录
             isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
             isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
+            isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
 
             if (isset($app['config.init_handler']) && is_callable($app['config.init_handler'])) {
                 call_user_func($app['config.init_handler'], $app);
@@ -76,6 +77,9 @@ class App implements \ArrayAccess
      */
     protected function initHandler(App $app)
     {
+        // 时区
+        date_default_timezone_set($app['config.timezone']);
+
         // session
         if (PHP_SAPI != 'cli') {
             $path_session = $app['config.path_data'] . '/session';
@@ -93,6 +97,7 @@ class App implements \ArrayAccess
             session_id() || session_start();
         }
 
+        // 日志目录
         $path_log = $app['config.path_data'] . '/log';
         if (!file_exists($path_log)) {
             mkdir($path_log, 0744, true);
@@ -106,9 +111,6 @@ class App implements \ArrayAccess
         set_error_handler([ErrorHandler::class, 'errorHandler']);
         // 未捕获的详情异常日志
         set_exception_handler([ErrorHandler::class, 'exceptionHandler']);
-
-        // 配置文件里的默认配置
-        date_default_timezone_set('PRC');
 
         // 环境配置
         if ($app['config.debug']) {

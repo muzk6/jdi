@@ -43,6 +43,7 @@ config.path_view | <jdi 根目录>/views | 视图模板目录
 config.path_config_first | <空> | 第一优先级配置目录，找不到配置文件时，就在第二优先级配置目录里找，以此类推
 config.path_config_second | <空> | 第二优先级配置目录
 config.path_config_third | <jdi 根目录>/config | 第三优先级配置目录，一般默认即可，取框架的默认配置文件
+config.timezone | PRC | 时区
 config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\App::initHandler
 
 ### 更多例子请 `cd` 到目录 `tests/feature`
