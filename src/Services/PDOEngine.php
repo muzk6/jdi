@@ -36,11 +36,6 @@ class PDOEngine
         $this->connection_handler = $connection_handler;
     }
 
-    public function __destruct()
-    {
-        $this->close();
-    }
-
     /**
      * 获取连接资源 PDO
      * @param bool $use_master 是否使用主库
