@@ -42,7 +42,7 @@ class XHProf
         $this->path_data = $conf['path_data'];
 
         if (!file_exists($this->path_data)) {
-            mkdir($this->path_data, 0744, true);
+            mkdir($this->path_data, 0755, true);
         }
     }
 
@@ -99,7 +99,7 @@ class XHProf
 
         $path = $this->path_data;
         if (!file_exists($path)) {
-            mkdir($path, 0744, true);
+            mkdir($path, 0755, true);
         }
 
         if (PHP_SAPI == 'cli') {

@@ -91,7 +91,7 @@ class App implements \ArrayAccess
             ini_set('session.cookie_httponly', 'On');
 
             if (!file_exists($path_session)) {
-                mkdir($path_session, 0744, true);
+                mkdir($path_session, 0755, true);
             }
 
             session_id() || session_start();
@@ -100,7 +100,7 @@ class App implements \ArrayAccess
         // 日志目录
         $path_log = $app['config.path_data'] . '/log';
         if (!file_exists($path_log)) {
-            mkdir($path_log, 0744, true);
+            mkdir($path_log, 0755, true);
         }
 
         // PHP 标准错误处理程序，能记录 Fatal Error, Parse Error

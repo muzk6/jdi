@@ -29,7 +29,7 @@ class Xdebug
         $this->debug = $conf['debug'] ?? false;
 
         if (!file_exists($this->path_data)) {
-            mkdir($this->path_data, 0744, true);
+            mkdir($this->path_data, 0755, true);
         }
 
         $this->initDisplaySetting();
@@ -146,7 +146,7 @@ class Xdebug
         }
 
         if (!file_exists($this->path_data)) {
-            mkdir($this->path_data, 0744, true);
+            mkdir($this->path_data, 0755, true);
         }
 
         ini_set('xdebug.var_display_max_depth', $this->max_depth);
