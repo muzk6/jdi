@@ -23,27 +23,24 @@ class Log
      * @param string $index 日志名(索引)
      * @param array|string $data 日志内容
      * @param string $filename 日志文件名前缀
-     * @param int $trace_index 调用处堆栈索引
-     * @return int|null
+     * @return bool|int
      */
-    public function file(string $index, $data, string $filename = 'app', $trace_index = 0)
+    public function file(string $index, $data, string $filename = 'app')
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $trace_index + 1)[$trace_index];
         $filename = trim(str_replace('/', '', $filename));
 
         $log = json_encode([
             'time' => date('Y-m-d H:i:s'),
             'index' => $index,
             'request_id' => isset($_SERVER['REQUEST_TIME_FLOAT']) ? md5(strval($_SERVER['REQUEST_TIME_FLOAT'])) : '',
-            'file' => "{$trace['file']}:{$trace['line']}",
             'sapi' => PHP_SAPI,
             'hostname' => php_uname('n'),
             'method' => $_SERVER['REQUEST_METHOD'] ?? '',
             'host' => $_SERVER['HTTP_HOST'] ?? '',
             'url' => $_SERVER['REQUEST_URI'] ?? '',
             'client_ip' => Utils::get_client_ip(),
-            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'user_id' => svc_auth()->getUserId(),
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'data' => $data,
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
 

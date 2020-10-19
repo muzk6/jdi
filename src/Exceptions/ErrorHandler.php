@@ -22,23 +22,6 @@ class ErrorHandler
      */
     public static function errorHandler($errno, $errstr, $errfile, $errline)
     {
-        $line_code = '';
-        $handle = @fopen($errfile, 'r');
-        if ($handle) {
-            $current = 0;
-            while (is_resource($handle) && !feof($handle)) {
-                $buffer = fgets($handle, 1024);
-                $current++;
-
-                if ($errline == $current) {
-                    $line_code = trim($buffer);
-                    break;
-                }
-            }
-
-            fclose($handle);
-        }
-
         $error_type = array(
             E_ERROR => 'ERROR',
             E_WARNING => 'WARNING',
@@ -56,10 +39,10 @@ class ErrorHandler
         );
 
         $data = [
-            'level' => $error_type[$errno] ?? 'CAUGHT EXCEPTION',
             'message' => $errstr,
-            'line' => $line_code,
+            'level' => $error_type[$errno] ?? $errno,
             'file' => "{$errfile}:{$errline}",
+            'line_content' => self::getLineContent($errfile, $errline),
             'backtrace' => [],
         ];
 
@@ -84,9 +67,10 @@ class ErrorHandler
         $line_num = $exception->getLine();
 
         $data = [
-            'code' => $exception->getCode(),
             'message' => $exception->getMessage(),
+            'code' => $exception->getCode(),
             'file' => "{$filename}:{$line_num}",
+            'line_content' => self::getLineContent($filename, $line_num),
             'backtrace' => [],
         ];
 
@@ -98,6 +82,34 @@ class ErrorHandler
         svc_log()->file('exception_handler', $data, 'error');
 
         throw $exception;
+    }
+
+    /**
+     * 取文件指定行内容
+     * @param string $filename
+     * @param int $line
+     * @return string
+     */
+    public static function getLineContent(string $filename, int $line)
+    {
+        $source_code = '';
+        $handle = @fopen($filename, 'r');
+        if ($handle) {
+            $current = 0;
+            while (is_resource($handle) && !feof($handle)) {
+                $buffer = fgets($handle, 1024);
+                $current++;
+
+                if ($line == $current) {
+                    $source_code = trim($buffer);
+                    break;
+                }
+            }
+
+            fclose($handle);
+        }
+
+        return $source_code;
     }
 
     /**

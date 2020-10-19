@@ -66,7 +66,7 @@ if (!function_exists('logfile')) {
      */
     function logfile(string $index, $data, string $filename = 'app')
     {
-        return svc_log()->file($index, $data, $filename, 1);
+        return svc_log()->file($index, $data, $filename);
     }
 }
 
