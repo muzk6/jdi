@@ -10,7 +10,7 @@ class WhitelistTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        App::set('service.whitelist', new Whitelist([
+        App::set('svc_whitelist', new Whitelist([
             'ip' => [
                 '127.0.0.1',
             ],

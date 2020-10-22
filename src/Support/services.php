@@ -25,7 +25,7 @@ if (!function_exists('svc_config')) {
      */
     function svc_config()
     {
-        return App::singleton('service.config', function ($app) {
+        return App::singleton(__FUNCTION__, function ($app) {
             return new Config([
                 'path_config_first' => $app['config.path_config_first'], // 第一优先级配置目录
                 'path_config_second' => $app['config.path_config_second'], // 第二优先级配置目录
@@ -42,7 +42,7 @@ if (!function_exists('svc_router')) {
      */
     function svc_router()
     {
-        return App::singleton('service.router', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new Router();
         });
     }
@@ -55,7 +55,7 @@ if (!function_exists('svc_request')) {
      */
     function svc_request()
     {
-        return App::singleton('service.request', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new Request();
         });
     }
@@ -68,7 +68,7 @@ if (!function_exists('svc_log')) {
      */
     function svc_log()
     {
-        return App::singleton('service.log', function ($app) {
+        return App::singleton(__FUNCTION__, function ($app) {
             return new Log([
                 'path_data' => $app['config.path_data'] . '/log', // 日志路径
             ]);
@@ -83,7 +83,7 @@ if (!function_exists('svc_lang')) {
      */
     function svc_lang()
     {
-        return App::singleton('service.lang', function () {
+        return App::singleton(__FUNCTION__, function () {
             if (isset($_COOKIE['lang']) && svc_config()->exists('lang_' . $_COOKIE['lang'])) {
                 $lang = $_COOKIE['lang'];
             } else {
@@ -114,7 +114,7 @@ if (!function_exists('svc_mysql')) {
      */
     function svc_mysql()
     {
-        return App::singleton('service.mysql', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new PDOEngine(svc_config()->get('mysql'), function ($host) {
                 return new PDO($host['dsn'], $host['user'], $host['passwd'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
             });
@@ -141,7 +141,7 @@ if (!function_exists('svc_blade')) {
      */
     function svc_blade()
     {
-        return App::singleton('service.blade', function ($app) {
+        return App::singleton(__FUNCTION__, function ($app) {
             return new Blade([
                 'path_view' => $app['config.path_view'],
                 'path_cache' => $app['config.path_data'] . '/view_cache',
@@ -158,7 +158,7 @@ if (!function_exists('svc_redis')) {
      */
     function svc_redis()
     {
-        return App::singleton('service.redis', function () {
+        return App::singleton(__FUNCTION__, function () {
             if (!extension_loaded('redis')) {
                 trigger_error('"pecl install redis" at first', E_USER_ERROR);
             }
@@ -193,7 +193,7 @@ if (!function_exists('svc_curl')) {
      */
     function svc_curl()
     {
-        return App::singleton('service.curl', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new CURL();
         });
     }
@@ -206,7 +206,7 @@ if (!function_exists('svc_xsrf')) {
      */
     function svc_xsrf()
     {
-        return App::singleton('service.xsrf', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new XSRF(['expire' => 0]);
         });
     }
@@ -219,7 +219,7 @@ if (!function_exists('svc_auth')) {
      */
     function svc_auth()
     {
-        return App::singleton('service.auth', function () {
+        return App::singleton(__FUNCTION__, function () {
             $http_host = md5($_SERVER['HTTP_HOST'] ?? '');
             return new Auth(['prefix' => "AUTH:{$http_host}:"]);
         });
@@ -233,7 +233,7 @@ if (!function_exists('svc_flash')) {
      */
     function svc_flash()
     {
-        return App::singleton('service.flash', function () {
+        return App::singleton(__FUNCTION__, function () {
             $http_host = md5($_SERVER['HTTP_HOST'] ?? '');
             return new Flash(['prefix' => "FLASH:{$http_host}:"]);
         });
@@ -247,7 +247,7 @@ if (!function_exists('svc_rabbitmq')) {
      */
     function svc_rabbitmq()
     {
-        return App::singleton('service.rabbitmq', function () {
+        return App::singleton(__FUNCTION__, function () {
             return new MessageQueue(svc_config()->get('rabbitmq'), function ($host) {
                 return new \PhpAmqpLib\Connection\AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['passwd']);
             });
@@ -262,7 +262,7 @@ if (!function_exists('svc_whitelist')) {
      */
     function svc_whitelist()
     {
-        return App::singleton('service.whitelist', function ($app) {
+        return App::singleton(__FUNCTION__, function () {
             return new Whitelist(svc_config()->get('whitelist'));
         });
     }
@@ -275,7 +275,7 @@ if (!function_exists('svc_xdebug')) {
      */
     function svc_xdebug()
     {
-        return App::singleton('service.xdebug', function ($app) {
+        return App::singleton(__FUNCTION__, function ($app) {
             return new Xdebug([
                 'path_data' => $app['config.path_data'] . '/xdebug_trace',
                 'debug' => $app['config.debug'], // true 时跳过白名单限制
@@ -291,7 +291,7 @@ if (!function_exists('svc_xhprof')) {
      */
     function svc_xhprof()
     {
-        return App::singleton('service.xhprof', function ($app) {
+        return App::singleton(__FUNCTION__, function ($app) {
             $conf = svc_config()->get('xhprof');
             $conf['path_data'] = $app['config.path_data'] . '/xhprof';
 
