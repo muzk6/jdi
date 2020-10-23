@@ -6,6 +6,10 @@ use Exception;
 use JDI\Exceptions\AppException;
 use stdClass;
 
+/**
+ * 通用工具类
+ * @package JDI\Support
+ */
 class Utils
 {
     /**
@@ -130,7 +134,7 @@ class Utils
             }
 
             list($alias, $path) = $path;
-            $conf = svc_config()->get('url');
+            $conf = Svc::config()->get('url');
             if (!isset($conf[$alias])) {
                 trigger_error("url.php 不存在配置项: {$alias}", E_USER_ERROR);
             }

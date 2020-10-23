@@ -3,6 +3,7 @@
 
 namespace JDI\Services;
 
+use JDI\Support\Svc;
 use JDI\Support\Utils;
 
 /**
@@ -76,11 +77,11 @@ class Whitelist
      */
     public function isSafeUserId()
     {
-        if (!svc_auth()->isLogin()) {
+        if (!Svc::auth()->isLogin()) {
             return false;
         }
 
-        return in_array(svc_auth()->getUserId(), $this->user_id);
+        return in_array(Svc::auth()->getUserId(), $this->user_id);
     }
 
     /**

@@ -157,7 +157,7 @@ class App implements \ArrayAccess
     }
 
     /**
-     * 容器获取
+     * 获取
      * @param string $name
      * @return mixed
      */
@@ -167,13 +167,22 @@ class App implements \ArrayAccess
     }
 
     /**
-     * 容器设置
+     * 设置
      * @param string $name
      * @param mixed $value 回调函数能延迟加载
      */
     public static function set(string $name, $value)
     {
         static::$app[$name] = $value;
+    }
+
+    /**
+     * 删除
+     * @param string $name
+     */
+    public static function unset(string $name)
+    {
+        unset(static::$app[$name]);
     }
 
     /**

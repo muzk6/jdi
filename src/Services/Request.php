@@ -6,6 +6,7 @@ namespace JDI\Services;
 
 use Exception;
 use JDI\Exceptions\AppException;
+use JDI\Support\Svc;
 
 /**
  * HTTP请求体
@@ -238,7 +239,7 @@ class Request
      */
     public function flash()
     {
-        return svc_flash()->set('__old_request', array_merge($_GET, $_POST)) ? true : false;
+        return Svc::flash()->set('__old_request', array_merge($_GET, $_POST)) ? true : false;
     }
 
     /**
@@ -250,7 +251,7 @@ class Request
     public function old(string $name = '', string $default = '')
     {
         if (!$this->old_request) {
-            $this->old_request = svc_flash()->get('__old_request');
+            $this->old_request = Svc::flash()->get('__old_request');
         }
 
         if ($name) {

@@ -5,6 +5,7 @@ namespace JDI\Services;
 
 
 use DateTime;
+use JDI\Support\Svc;
 use PDO;
 use PDOException;
 
@@ -85,7 +86,7 @@ class AppPDO
                 }
             }
 
-            svc_log()->file('sql', $sql_log, 'sql');
+            Svc::log()->file('sql', $sql_log, 'sql');
         }
 
         return $sql;

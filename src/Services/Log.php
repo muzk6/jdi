@@ -4,6 +4,7 @@
 namespace JDI\Services;
 
 
+use JDI\Support\Svc;
 use JDI\Support\Utils;
 
 class Log
@@ -39,7 +40,7 @@ class Log
             'host' => $_SERVER['HTTP_HOST'] ?? '',
             'url' => $_SERVER['REQUEST_URI'] ?? '',
             'client_ip' => Utils::get_client_ip(),
-            'user_id' => svc_auth()->getUserId(),
+            'user_id' => Svc::auth()->getUserId(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'data' => $data,
         ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);

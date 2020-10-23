@@ -4,6 +4,7 @@
 namespace JDI\Services;
 
 use JDI\Exceptions\AppException;
+use JDI\Support\Svc;
 use JDI\Support\Utils;
 
 /**
@@ -176,8 +177,8 @@ class Router
                         $this->runMiddleware(array_slice($this->routes, $route_index + 1), $route_value['group'][0]);
                     });
 
-                    svc_xhprof()->auto();
-                    svc_xdebug()->auto();
+                    Svc::xhprof()->auto();
+                    Svc::xdebug()->auto();
 
                     try {
                         // 路由前置勾子

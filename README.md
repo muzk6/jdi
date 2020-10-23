@@ -219,6 +219,35 @@ d | double
 
 其中与 `api_format()` 的关系是：`api_json()` 即 `json_encode(api_format())`
 
+## 容器服务
+
+### 定义单例服务
+ 
+```php
+function svc_foo()
+{
+    return \JDI\App::singleton(__FUNCTION__, function () {
+        return new Foo();
+    });
+}
+```
+
+### 覆盖
+
+如果上面的 `svc_foo()` 还未调用过，可以覆盖：
+
+```php
+\JDI\App::set('svc_foo', function () {
+    return new Bar();
+});
+```
+
+如果要强制修改，可以先删除：
+
+```php
+\JDI\App::unset('svc_foo');
+```
+
 ## PDO 数据库
 
 可以配置 MySQL, SQLite 等 PDO 支持的数据库

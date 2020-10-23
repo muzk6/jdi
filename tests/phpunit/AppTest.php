@@ -26,6 +26,12 @@ class AppTest extends TestCase
         App::set('test_callable', function () {
             return 'frozen';
         });
+
+        App::unset('test_callable');
+        App::set('test_callable', function () {
+            return 'new ok';
+        });
+        $this->assertEquals('new ok', App::get('test_callable'));
     }
 
     public function testSingleton()

@@ -2,6 +2,7 @@
 
 use JDI\Exceptions\AppException;
 use JDI\Services\Validator;
+use JDI\Support\Svc;
 use JDI\Support\Utils;
 
 if (!function_exists('config')) {
@@ -19,12 +20,12 @@ if (!function_exists('config')) {
         if (is_array($key)) {
             $ret = false;
             foreach ($key as $k => $v) {
-                $ret = svc_config()->set($k, $v);
+                $ret = Svc::config()->set($k, $v);
             }
 
             return $ret;
         } else {
-            return svc_config()->get($key);
+            return Svc::config()->get($key);
         }
     }
 }
@@ -52,7 +53,7 @@ if (!function_exists('trans')) {
      */
     function trans(int $code, array $params = [])
     {
-        return svc_lang()->trans($code, $params);
+        return Svc::lang()->trans($code, $params);
     }
 }
 
@@ -66,7 +67,7 @@ if (!function_exists('logfile')) {
      */
     function logfile(string $index, $data, string $filename = 'app')
     {
-        return svc_log()->file($index, $data, $filename);
+        return Svc::log()->file($index, $data, $filename);
     }
 }
 
@@ -120,7 +121,7 @@ if (!function_exists('assign')) {
      */
     function assign(string $name, $value)
     {
-        svc_blade()->assign($name, $value);
+        Svc::blade()->assign($name, $value);
     }
 }
 
@@ -134,7 +135,7 @@ if (!function_exists('view')) {
      */
     function view(string $view, array $params = [])
     {
-        return svc_blade()->view($view, $params);
+        return Svc::blade()->view($view, $params);
     }
 }
 
@@ -157,7 +158,7 @@ if (!function_exists('input')) {
      */
     function input(string $field, $default = '', callable $after = null)
     {
-        return svc_request()->input($field, $default, $after);
+        return Svc::request()->input($field, $default, $after);
     }
 }
 
@@ -180,7 +181,7 @@ if (!function_exists('validate')) {
      */
     function validate(string $field, $default = '', callable $after = null)
     {
-        return svc_request()->validate($field, $default, $after);
+        return Svc::request()->validate($field, $default, $after);
     }
 }
 
@@ -193,7 +194,7 @@ if (!function_exists('request')) {
      */
     function request(bool $in_parallel = false)
     {
-        return svc_request()->request($in_parallel);
+        return Svc::request()->request($in_parallel);
     }
 }
 
@@ -267,22 +268,22 @@ if (!function_exists('throttle')) {
         $now = time();
         $len = 0;
 
-        if (svc_redis()->lLen($key) < $limit) {
-            $len = svc_redis()->lPush($key, $now);
+        if (Svc::redis()->lLen($key) < $limit) {
+            $len = Svc::redis()->lPush($key, $now);
         } else {
-            $earliest = intval(svc_redis()->lIndex($key, -1));
+            $earliest = intval(Svc::redis()->lIndex($key, -1));
             if ($now - $earliest < $ttl) {
-                svc_redis()->expire($key, $ttl);
+                Svc::redis()->expire($key, $ttl);
                 AppException::panic(10001001, [
                     'reset' => $earliest + $ttl,
                 ]);
             } else {
-                svc_redis()->lTrim($key, 1, 0);
-                $len = svc_redis()->lPush($key, $now);
+                Svc::redis()->lTrim($key, 1, 0);
+                $len = Svc::redis()->lPush($key, $now);
             }
         }
 
-        svc_redis()->expire($key, $ttl);
+        Svc::redis()->expire($key, $ttl);
         return $limit - $len;
     }
 }
@@ -294,7 +295,7 @@ if (!function_exists('request_flash')) {
      */
     function request_flash()
     {
-        return svc_request()->flash();
+        return Svc::request()->flash();
     }
 }
 
@@ -307,7 +308,7 @@ if (!function_exists('old')) {
      */
     function old(string $name = '', string $default = '')
     {
-        return svc_request()->old($name, $default);
+        return Svc::request()->old($name, $default);
     }
 }
 
@@ -320,7 +321,7 @@ if (!function_exists('flash_set')) {
      */
     function flash_set(string $key, $value)
     {
-        return svc_flash()->set($key, $value);
+        return Svc::flash()->set($key, $value);
     }
 }
 
@@ -332,7 +333,7 @@ if (!function_exists('flash_has')) {
      */
     function flash_has(string $key)
     {
-        return svc_flash()->has($key);
+        return Svc::flash()->has($key);
     }
 }
 
@@ -344,7 +345,7 @@ if (!function_exists('flash_exists')) {
      */
     function flash_exists(string $key)
     {
-        return svc_flash()->exists($key);
+        return Svc::flash()->exists($key);
     }
 }
 
@@ -356,7 +357,7 @@ if (!function_exists('flash_get')) {
      */
     function flash_get(string $key)
     {
-        return svc_flash()->get($key);
+        return Svc::flash()->get($key);
     }
 }
 
@@ -368,7 +369,7 @@ if (!function_exists('flash_del')) {
      */
     function flash_del(string $key)
     {
-        return svc_flash()->del($key);
+        return Svc::flash()->del($key);
     }
 }
 
@@ -379,7 +380,7 @@ if (!function_exists('xsrf_field')) {
      */
     function xsrf_field()
     {
-        return svc_xsrf()->field();
+        return Svc::xsrf()->field();
     }
 }
 
@@ -391,7 +392,7 @@ if (!function_exists('xsrf_token')) {
      */
     function xsrf_token()
     {
-        return svc_xsrf()->token();
+        return Svc::xsrf()->token();
     }
 }
 
@@ -403,7 +404,7 @@ if (!function_exists('xsrf_check')) {
      */
     function xsrf_check()
     {
-        return svc_xsrf()->check();
+        return Svc::xsrf()->check();
     }
 }
 
@@ -417,7 +418,7 @@ if (!function_exists('mq_publish')) {
      */
     function mq_publish(string $queue, array $data, string $exchange_name = 'jdi.direct', string $exchange_type = 'direct')
     {
-        svc_rabbitmq()->publish($queue, $data, $exchange_name, $exchange_type);
+        Svc::rabbitmq()->publish($queue, $data, $exchange_name, $exchange_type);
     }
 }
 
@@ -429,7 +430,7 @@ if (!function_exists('svc_rabbitmq')) {
      */
     function mq_consume(string $queue, callable $callback)
     {
-        svc_rabbitmq()->consume($queue, $callback);
+        Svc::rabbitmq()->consume($queue, $callback);
     }
 }
 
@@ -441,7 +442,7 @@ if (!function_exists('route_get')) {
      */
     function route_get($url, callable $action)
     {
-        svc_router()->addRoute('GET', $url, $action);
+        Svc::router()->addRoute('GET', $url, $action);
     }
 }
 
@@ -453,7 +454,7 @@ if (!function_exists('route_post')) {
      */
     function route_post($url, callable $action)
     {
-        svc_router()->addRoute('POST', $url, $action);
+        Svc::router()->addRoute('POST', $url, $action);
     }
 }
 
@@ -465,7 +466,7 @@ if (!function_exists('route_any')) {
      */
     function route_any($url, callable $action)
     {
-        svc_router()->addRoute('ANY', $url, $action);
+        Svc::router()->addRoute('ANY', $url, $action);
     }
 }
 
@@ -477,7 +478,7 @@ if (!function_exists('route_get_re')) {
      */
     function route_get_re($url, callable $action)
     {
-        svc_router()->addRoute('GET', $url, $action, ['url_type' => 'regexp']);
+        Svc::router()->addRoute('GET', $url, $action, ['url_type' => 'regexp']);
     }
 }
 
@@ -489,7 +490,7 @@ if (!function_exists('route_post_re')) {
      */
     function route_post_re($url, callable $action)
     {
-        svc_router()->addRoute('POST', $url, $action, ['url_type' => 'regexp']);
+        Svc::router()->addRoute('POST', $url, $action, ['url_type' => 'regexp']);
     }
 }
 
@@ -501,7 +502,7 @@ if (!function_exists('route_any_re')) {
      */
     function route_any_re($url, callable $action)
     {
-        svc_router()->addRoute('ANY', $url, $action, ['url_type' => 'regexp']);
+        Svc::router()->addRoute('ANY', $url, $action, ['url_type' => 'regexp']);
     }
 }
 
@@ -512,7 +513,7 @@ if (!function_exists('route_middleware')) {
      */
     function route_middleware(callable $fn)
     {
-        svc_router()->addMiddleware($fn);
+        Svc::router()->addMiddleware($fn);
     }
 }
 
@@ -523,7 +524,7 @@ if (!function_exists('route_group')) {
      */
     function route_group(callable $fn)
     {
-        svc_router()->addGroup($fn);
+        Svc::router()->addGroup($fn);
     }
 }
 
@@ -540,7 +541,7 @@ if (!function_exists('curl_post')) {
      */
     function curl_post($url, array $data = [], array $headers = [], int $connect_timeout = 3)
     {
-        return svc_curl()->post($url, $data, $headers, $connect_timeout);
+        return Svc::curl()->post($url, $data, $headers, $connect_timeout);
     }
 }
 
@@ -557,6 +558,6 @@ if (!function_exists('curl_get')) {
      */
     function curl_get($url, array $data = [], array $headers = [], int $connect_timeout = 3)
     {
-        return svc_curl()->get($url, $data, $headers, $connect_timeout);
+        return Svc::curl()->get($url, $data, $headers, $connect_timeout);
     }
 }

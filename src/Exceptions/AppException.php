@@ -3,6 +3,7 @@
 namespace JDI\Exceptions;
 
 use Exception;
+use JDI\Support\Svc;
 use Throwable;
 
 /**
@@ -50,12 +51,12 @@ final class AppException extends Exception implements Throwable
             $lang_params = (isset($message_or_code[1]) && is_array($message_or_code[1]))
                 ? $message_or_code[1]
                 : array_slice($message_or_code, 1);
-            $message = svc_lang()->trans($code, $lang_params);
+            $message = Svc::lang()->trans($code, $lang_params);
 
             $exception = new AppException($message, $code);
         } elseif (is_int($message_or_code)) {
             $code = $message_or_code;
-            $message = svc_lang()->trans($code);
+            $message = Svc::lang()->trans($code);
             $exception = new AppException($message, $code);
         } else {
             $message = $message_or_code;

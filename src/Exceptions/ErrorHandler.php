@@ -4,6 +4,7 @@
 namespace JDI\Exceptions;
 
 use Exception;
+use JDI\Support\Svc;
 use Throwable;
 
 /**
@@ -51,7 +52,7 @@ class ErrorHandler
             $data['backtrace'] = explode("\n", $trace);
         }
 
-        svc_log()->file('error_handler', $data, 'error');
+        Svc::log()->file('error_handler', $data, 'error');
 
         return false;
     }
@@ -79,7 +80,7 @@ class ErrorHandler
             $data['backtrace'] = explode("\n", $trace);
         }
 
-        svc_log()->file('exception_handler', $data, 'error');
+        Svc::log()->file('exception_handler', $data, 'error');
 
         throw $exception;
     }

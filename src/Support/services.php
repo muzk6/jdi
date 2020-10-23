@@ -1,9 +1,7 @@
 <?php
 
-use JDI\App;
 use JDI\Services\Auth;
 use JDI\Services\Blade;
-use JDI\Services\BladeOne;
 use JDI\Services\Config;
 use JDI\Services\CURL;
 use JDI\Services\Flash;
@@ -17,6 +15,7 @@ use JDI\Services\Whitelist;
 use JDI\Services\Xdebug;
 use JDI\Services\XHProf;
 use JDI\Services\XSRF;
+use JDI\Support\Svc;
 
 if (!function_exists('svc_config')) {
     /**
@@ -25,13 +24,7 @@ if (!function_exists('svc_config')) {
      */
     function svc_config()
     {
-        return App::singleton(__FUNCTION__, function ($app) {
-            return new Config([
-                'path_config_first' => $app['config.path_config_first'], // 第一优先级配置目录
-                'path_config_second' => $app['config.path_config_second'], // 第二优先级配置目录
-                'path_config_third' => $app['config.path_config_third'], // 第三优先级配置目录，一般为库的默认配置目录
-            ]);
-        });
+        return Svc::config();
     }
 }
 
@@ -42,9 +35,7 @@ if (!function_exists('svc_router')) {
      */
     function svc_router()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new Router();
-        });
+        return Svc::router();
     }
 }
 
@@ -55,9 +46,7 @@ if (!function_exists('svc_request')) {
      */
     function svc_request()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new Request();
-        });
+        return Svc::request();
     }
 }
 
@@ -68,11 +57,7 @@ if (!function_exists('svc_log')) {
      */
     function svc_log()
     {
-        return App::singleton(__FUNCTION__, function ($app) {
-            return new Log([
-                'path_data' => $app['config.path_data'] . '/log', // 日志路径
-            ]);
-        });
+        return Svc::log();
     }
 }
 
@@ -83,27 +68,7 @@ if (!function_exists('svc_lang')) {
      */
     function svc_lang()
     {
-        return App::singleton(__FUNCTION__, function () {
-            if (isset($_COOKIE['lang']) && svc_config()->exists('lang_' . $_COOKIE['lang'])) {
-                $lang = $_COOKIE['lang'];
-            } else {
-                $lang = 'zh_CN';
-            }
-
-            return new Lang([
-                'lang' => $lang, // 当前语言
-                'dict' => [
-                    // 中文字典
-                    'zh_CN' => function () {
-                        return svc_config()->get('lang_zh_CN');
-                    },
-                    // 英文字典
-                    'en' => function () {
-                        return svc_config()->get('lang_en');
-                    },
-                ]
-            ]);
-        });
+        return Svc::lang();
     }
 }
 
@@ -114,23 +79,19 @@ if (!function_exists('svc_mysql')) {
      */
     function svc_mysql()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new PDOEngine(svc_config()->get('mysql'), function ($host) {
-                return new PDO($host['dsn'], $host['user'], $host['passwd'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
-            });
-        });
+        return Svc::mysql();
     }
 }
 
 if (!function_exists('db')) {
     /**
-     * svc_mysql() 的别名
+     * Svc::mysql() 的别名
      * @return PDOEngine
-     * @see svc_mysql()
+     * @see Svc::mysql()
      */
     function db()
     {
-        return svc_mysql();
+        return Svc::mysql();
     }
 }
 
@@ -141,13 +102,7 @@ if (!function_exists('svc_blade')) {
      */
     function svc_blade()
     {
-        return App::singleton(__FUNCTION__, function ($app) {
-            return new Blade([
-                'path_view' => $app['config.path_view'],
-                'path_cache' => $app['config.path_data'] . '/view_cache',
-                'mode' => $app['config.debug'] ? BladeOne::MODE_DEBUG : BladeOne::MODE_AUTO,
-            ]);
-        });
+        return Svc::blade();
     }
 }
 
@@ -158,31 +113,7 @@ if (!function_exists('svc_redis')) {
      */
     function svc_redis()
     {
-        return App::singleton(__FUNCTION__, function () {
-            if (!extension_loaded('redis')) {
-                trigger_error('"pecl install redis" at first', E_USER_ERROR);
-            }
-
-            $inst = new Redis();
-
-            $conf = svc_config()->get('redis');
-            shuffle($conf);
-
-            foreach ($conf as $host) {
-                try {
-                    if ($inst->pconnect($host['host'], $host['port'], $host['timeout'])) {
-                        $inst->setOption(Redis::OPT_PREFIX, $host['prefix']);
-                        $inst->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
-
-                        break;
-                    }
-                } catch (\Exception $exception) {
-                    trigger_error($exception->getMessage() . ': ' . json_encode($host, JSON_UNESCAPED_SLASHES), E_USER_WARNING);
-                }
-            }
-
-            return $inst;
-        });
+        return Svc::redis();
     }
 }
 
@@ -193,9 +124,7 @@ if (!function_exists('svc_curl')) {
      */
     function svc_curl()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new CURL();
-        });
+        return Svc::curl();
     }
 }
 
@@ -206,9 +135,7 @@ if (!function_exists('svc_xsrf')) {
      */
     function svc_xsrf()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new XSRF(['expire' => 0]);
-        });
+        return Svc::xsrf();
     }
 }
 
@@ -219,10 +146,7 @@ if (!function_exists('svc_auth')) {
      */
     function svc_auth()
     {
-        return App::singleton(__FUNCTION__, function () {
-            $http_host = md5($_SERVER['HTTP_HOST'] ?? '');
-            return new Auth(['prefix' => "AUTH:{$http_host}:"]);
-        });
+        return Svc::auth();
     }
 }
 
@@ -233,10 +157,7 @@ if (!function_exists('svc_flash')) {
      */
     function svc_flash()
     {
-        return App::singleton(__FUNCTION__, function () {
-            $http_host = md5($_SERVER['HTTP_HOST'] ?? '');
-            return new Flash(['prefix' => "FLASH:{$http_host}:"]);
-        });
+        return Svc::flash();
     }
 }
 
@@ -247,11 +168,7 @@ if (!function_exists('svc_rabbitmq')) {
      */
     function svc_rabbitmq()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new MessageQueue(svc_config()->get('rabbitmq'), function ($host) {
-                return new \PhpAmqpLib\Connection\AMQPStreamConnection($host['host'], $host['port'], $host['user'], $host['passwd']);
-            });
-        });
+        return Svc::rabbitmq();
     }
 }
 
@@ -262,9 +179,7 @@ if (!function_exists('svc_whitelist')) {
      */
     function svc_whitelist()
     {
-        return App::singleton(__FUNCTION__, function () {
-            return new Whitelist(svc_config()->get('whitelist'));
-        });
+        return Svc::whitelist();
     }
 }
 
@@ -275,12 +190,7 @@ if (!function_exists('svc_xdebug')) {
      */
     function svc_xdebug()
     {
-        return App::singleton(__FUNCTION__, function ($app) {
-            return new Xdebug([
-                'path_data' => $app['config.path_data'] . '/xdebug_trace',
-                'debug' => $app['config.debug'], // true 时跳过白名单限制
-            ]);
-        });
+        return Svc::xdebug();
     }
 }
 
@@ -291,11 +201,6 @@ if (!function_exists('svc_xhprof')) {
      */
     function svc_xhprof()
     {
-        return App::singleton(__FUNCTION__, function ($app) {
-            $conf = svc_config()->get('xhprof');
-            $conf['path_data'] = $app['config.path_data'] . '/xhprof';
-
-            return new XHProf($conf);
-        });
+        return Svc::xhprof();
     }
 }

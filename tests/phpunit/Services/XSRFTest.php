@@ -53,7 +53,7 @@ class XSRFTest extends TestCase
      */
     public function testExpired()
     {
-        App::set('svc_xsrf', function () {
+        App::set('JDI\Support\Svc::xsrf', function () {
             return new XSRF(['expire' => -1]);
         });
 

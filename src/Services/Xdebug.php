@@ -3,6 +3,8 @@
 
 namespace JDI\Services;
 
+use JDI\Support\Svc;
+
 /**
  * Xdebug Trace
  * @package JDI\Services
@@ -90,7 +92,7 @@ class Xdebug
         $name = '';
 
         // 从 cgi 开启
-        if ($this->debug || svc_whitelist()->isSafeIp() || svc_whitelist()->isSafeCookie()) {
+        if ($this->debug || Svc::whitelist()->isSafeIp() || Svc::whitelist()->isSafeCookie()) {
             if (isset($_REQUEST['_xt'])) {
                 $name = $_REQUEST['_xt'];
             } elseif (isset($_COOKIE['_xt'])) {
@@ -115,7 +117,7 @@ class Xdebug
             $trace_conf['url'] = preg_replace('#https?://#', '', $trace_conf['url']);
             if ($trace_conf['expire'] > time() // 检查过期
                 && preg_match("#^{$trace_conf['url']}#i", $url) // 检查 url path 是否匹配
-                && (!$trace_conf['user_id'] || (svc_auth()->isLogin() && $trace_conf['user_id'] == svc_auth()->getUserId())) // 有指定用户时，检查特定用户
+                && (!$trace_conf['user_id'] || (Svc::auth()->isLogin() && $trace_conf['user_id'] == Svc::auth()->getUserId())) // 有指定用户时，检查特定用户
             ) {
                 $trace_start = true;
 
@@ -178,7 +180,7 @@ class Xdebug
         $trace_data = [
             'uuid' => uniqid(),
             'trace' => $trace_name,
-            'user_id' => svc_auth()->getUserId(),
+            'user_id' => Svc::auth()->getUserId(),
             'url' => $url,
         ];
         $trace_filename = rtrim(str_replace(['+', '/'], ['-', '_'], base64_encode(json_encode($trace_data))), '=');
