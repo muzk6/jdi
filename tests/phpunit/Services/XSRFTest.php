@@ -53,7 +53,9 @@ class XSRFTest extends TestCase
      */
     public function testExpired()
     {
-        App::set('svc_xsrf', new XSRF(['expire' => -1]));
+        App::set('svc_xsrf', function () {
+            return new XSRF(['expire' => -1]);
+        });
 
         $_REQUEST['_token'] = xsrf_token();
         $this->expectExceptionCode(10001002);

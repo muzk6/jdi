@@ -3,6 +3,7 @@
 namespace JDI;
 
 use JDI\Exceptions\ErrorHandler;
+use JDI\Exceptions\FrozenServiceException;
 
 class App implements \ArrayAccess
 {
@@ -11,14 +12,32 @@ class App implements \ArrayAccess
      */
     public static $app;
 
+    /**
+     * @var array 容器元素
+     */
     protected $values = [];
+
+    /**
+     * @var array 已经实例化的容器元素
+     */
+    protected $frozen = [];
 
     private function __construct()
     {
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @throws FrozenServiceException
+     */
     public function offsetSet($offset, $value)
     {
+        // 已经实例化的容器元素，禁止覆盖
+        if (isset($this->frozen[$offset])) {
+            throw new FrozenServiceException($offset);
+        }
+
         $this->values[$offset] = $value;
     }
 
@@ -34,6 +53,11 @@ class App implements \ArrayAccess
 
     public function offsetGet($offset)
     {
+        if (isset($this->values[$offset]) && is_callable($this->values[$offset])) {
+            $this->values[$offset] = call_user_func($this->values[$offset], self::$app);
+            $this->frozen[$offset] = true;
+        }
+
         return $this->values[$offset];
     }
 
@@ -145,7 +169,7 @@ class App implements \ArrayAccess
     /**
      * 容器设置
      * @param string $name
-     * @param $value
+     * @param mixed $value 回调函数能延迟加载
      */
     public static function set(string $name, $value)
     {

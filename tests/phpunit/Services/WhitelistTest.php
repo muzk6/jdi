@@ -10,17 +10,19 @@ class WhitelistTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        App::set('svc_whitelist', new Whitelist([
-            'ip' => [
-                '127.0.0.1',
-            ],
-            'cookie' => [
-                'my_cookie'
-            ],
-            'user_id' => [
-                1010
-            ],
-        ]));
+        App::set('svc_whitelist', function () {
+            return new Whitelist([
+                'ip' => [
+                    '127.0.0.1',
+                ],
+                'cookie' => [
+                    'my_cookie'
+                ],
+                'user_id' => [
+                    1010
+                ],
+            ]);
+        });
     }
 
     public function testIsSafeUserId()
