@@ -179,9 +179,7 @@ class MessageQueue
                     echo PHP_EOL;
                 } catch (Exception $exception) {
                     $channel->basic_nack($msg->delivery_info['delivery_tag']);
-
-                    echo 'Exception: ' . PHP_EOL;
-                    var_export($exception->getMessage());
+                    echo get_class($exception) . ': ' . $exception->getMessage() . PHP_EOL;
                 }
 
                 $end_time = microtime(true);
