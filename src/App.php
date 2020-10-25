@@ -125,19 +125,15 @@ class App implements \ArrayAccess
             ini_set('session.save_path', $path_session);
             ini_set('session.gc_maxlifetime', 1440); // session 过期时间
             ini_set('session.name', 'user_session');
+            ini_set('session.cookie_lifetime', 0); // cookie 过期时间，0表示浏览器重启后失效
+            ini_set('session.cookie_httponly', 1);
 
+            // 使用 cookie
             if ($app['config.use_cookie']) {
-                // 使用 cookie
                 ini_set('session.use_cookies', 1);
                 ini_set('session.use_only_cookies', 1);
-                ini_set('session.cookie_lifetime', 0); // cookie 过期时间，0表示浏览器重启后失效
-                ini_set('session.cookie_httponly', 1);
 
                 session_id() || session_start();
-            } else {
-                // 禁用 cookie
-                ini_set('session.use_cookies', 0);
-                ini_set('session.use_only_cookies', 0);
             }
         }
 
