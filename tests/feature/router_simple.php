@@ -55,13 +55,11 @@ route_group(function () {
             // 部分验证，全部获取
             $request = request();
 
-            flash_set('data', ['first_name' => $first_name, 'last_name' => $last_name, 'request' => $request]);
+            // alert() 用例
+            alert(json_encode(['first_name' => $first_name, 'last_name' => $last_name, 'request' => $request]));
         } catch (AppException $app_exception) {
-            flash_set('msg', $app_exception->getMessage());
-            flash_set('data', $app_exception->getData());
+            alert($app_exception->getMessage());
         }
-
-        back();
     });
 
     /**
@@ -90,7 +88,7 @@ route_group(function () {
             $user_id = validate('user_id:i')->gt(0)->get('用户ID ');
 
             svc_auth()->login($user_id);
-            flash_set('msg', '登录成功');
+            flash_set('msg', '登录成功'); // flash_set() 用例，配合 302 跳转，在页面用 flash_get() 取提示内容
 
             redirect('/demo');
         } catch (AppException $app_exception) {
