@@ -27,7 +27,7 @@ route_get('/', function () {
 svc_router()->dispatch();
 ```
 
-开启服务：`php -S 0.0.0.0:8080 index.php`
+开启服务：`php -S 0.0.0.0:8080`
 
 ### 参数配置
 
