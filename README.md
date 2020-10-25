@@ -44,7 +44,7 @@ config.path_config_first | <空> | 第一优先级配置目录，找不到配置
 config.path_config_second | <空> | 第二优先级配置目录
 config.path_config_third | <jdi 根目录>/config | 第三优先级配置目录，一般默认即可，取框架的默认配置文件
 config.timezone | PRC | 时区
-config.use_cookie | true | 是否使用 cookie
+config.session_start | true | 开启 session
 config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\App::initHandler
 
 ### 更多例子请 `cd` 到目录 `tests/feature`

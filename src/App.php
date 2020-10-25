@@ -93,7 +93,7 @@ class App implements \ArrayAccess
             isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
             isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
             isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
-            isset($app['config.use_cookie']) || $app['config.use_cookie'] = true; // 使用 cookie
+            isset($app['config.session_start']) || $app['config.session_start'] = true; // 开启 session
 
             if (isset($app['config.init_handler']) && is_callable($app['config.init_handler'])) {
                 call_user_func($app['config.init_handler'], $app);
@@ -125,14 +125,15 @@ class App implements \ArrayAccess
             ini_set('session.save_path', $path_session);
             ini_set('session.gc_maxlifetime', 1440); // session 过期时间
             ini_set('session.name', 'user_session');
+
+            // cookie
+            ini_set('session.use_cookies', 1);
+            ini_set('session.use_only_cookies', 1);
             ini_set('session.cookie_lifetime', 0); // cookie 过期时间，0表示浏览器重启后失效
             ini_set('session.cookie_httponly', 1);
 
-            // 使用 cookie
-            if ($app['config.use_cookie']) {
-                ini_set('session.use_cookies', 1);
-                ini_set('session.use_only_cookies', 1);
-
+            // 开启 session
+            if ($app['config.session_start']) {
                 session_id() || session_start();
             }
         }
