@@ -93,6 +93,7 @@ class App implements \ArrayAccess
             isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
             isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
             isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
+            isset($app['config.use_cookie']) || $app['config.use_cookie'] = true; // 使用 cookie
 
             if (isset($app['config.init_handler']) && is_callable($app['config.init_handler'])) {
                 call_user_func($app['config.init_handler'], $app);
@@ -116,18 +117,28 @@ class App implements \ArrayAccess
         // session
         if (PHP_SAPI != 'cli') {
             $path_session = $app['config.path_data'] . '/session';
-            ini_set('session.save_handler', 'files');
-            ini_set('session.save_path', $path_session);
-            ini_set('session.gc_maxlifetime', 1440); // session过期时间
-            ini_set('session.cookie_lifetime', 0); // cookie过期时间，0表示浏览器重启后失效
-            ini_set('session.name', 'user_session');
-            ini_set('session.cookie_httponly', 'On');
-
             if (!file_exists($path_session)) {
                 mkdir($path_session, 0755, true);
             }
 
-            session_id() || session_start();
+            ini_set('session.save_handler', 'files');
+            ini_set('session.save_path', $path_session);
+            ini_set('session.gc_maxlifetime', 1440); // session 过期时间
+            ini_set('session.name', 'user_session');
+
+            if ($app['config.use_cookie']) {
+                // 使用 cookie
+                ini_set('session.use_cookies', 1);
+                ini_set('session.use_only_cookies', 1);
+                ini_set('session.cookie_lifetime', 0); // cookie 过期时间，0表示浏览器重启后失效
+                ini_set('session.cookie_httponly', 1);
+
+                session_id() || session_start();
+            } else {
+                // 禁用 cookie
+                ini_set('session.use_cookies', 0);
+                ini_set('session.use_only_cookies', 0);
+            }
         }
 
         // 日志目录
