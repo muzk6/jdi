@@ -166,4 +166,92 @@ class Utils
         return $host . $path;
     }
 
+    /**
+     * 读取、设置 配置
+     * <p>
+     * 读取 config/dev/app.php 里的 lang 配置：config('app.lang')<br>
+     * 设置：config(['app.lang' => 'en'])
+     * </p>
+     * @param string|array $key string时读取，array时设置
+     * @return bool|mixed
+     */
+    public static function config($key)
+    {
+        if (is_array($key)) {
+            $ret = false;
+            foreach ($key as $k => $v) {
+                $ret = Svc::config()->set($k, $v);
+            }
+
+            return $ret;
+        } else {
+            return Svc::config()->get($key);
+        }
+    }
+
+    /**
+     * 网页后退
+     */
+    public static function back()
+    {
+        header('Location: ' . $_SERVER['HTTP_REFERER']);
+        exit;
+    }
+
+    /**
+     * 网页跳转
+     * <p>redirect('/foo/bar') 跳转到当前域名的 /foo/bar 地址去</p>
+     * <p>redirect('https://google.com') 跳转到谷歌</p>
+     * @param string $url
+     */
+    public static function redirect(string $url)
+    {
+        header('Location: ' . $url);
+        exit;
+    }
+
+    /**
+     * JS alert() 并跳转回上一页
+     * @param string $msg
+     * @return string
+     */
+    public static function alert(string $msg)
+    {
+        echo "<script>alert('{$msg}');location.href='{$_SERVER['HTTP_REFERER']}'</script>";
+        exit;
+    }
+
+    /**
+     * 频率限制
+     * <p>ttl秒 内限制 limit次</p>
+     * @param string $key 缓存key
+     * @param int $limit 限制次数
+     * @param int $ttl 指定秒数内
+     * @return int 剩余次数，0表示这次是最后一次通过，下次就触发限制
+     * @throws AppException ['reset' => 重置的时间点]
+     */
+    public static function throttle(string $key, int $limit, int $ttl)
+    {
+        $now = time();
+        $len = 0;
+
+        if (Svc::redis()->lLen($key) < $limit) {
+            $len = Svc::redis()->lPush($key, $now);
+        } else {
+            $earliest = intval(Svc::redis()->lIndex($key, -1));
+            if ($now - $earliest < $ttl) {
+                Svc::redis()->expire($key, $ttl);
+                AppException::panic(10001001, [
+                    'reset' => $earliest + $ttl,
+                ]);
+            } else {
+                Svc::redis()->lTrim($key, 1, 0);
+                $len = Svc::redis()->lPush($key, $now);
+            }
+        }
+
+        Svc::redis()->expire($key, $ttl);
+        return $limit - $len;
+    }
+
 }

@@ -26,16 +26,7 @@ if (!function_exists('config')) {
      */
     function config($key)
     {
-        if (is_array($key)) {
-            $ret = false;
-            foreach ($key as $k => $v) {
-                $ret = Svc::config()->set($k, $v);
-            }
-
-            return $ret;
-        } else {
-            return Svc::config()->get($key);
-        }
+        return Utils::config($key);
     }
 }
 
@@ -213,8 +204,7 @@ if (!function_exists('back')) {
      */
     function back()
     {
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit;
+        Utils::back();
     }
 }
 
@@ -227,8 +217,7 @@ if (!function_exists('redirect')) {
      */
     function redirect(string $url)
     {
-        header('Location: ' . $url);
-        exit;
+        Utils::redirect($url);
     }
 }
 
@@ -240,8 +229,7 @@ if (!function_exists('alert')) {
      */
     function alert(string $msg)
     {
-        echo "<script>alert('{$msg}');location.href='{$_SERVER['HTTP_REFERER']}'</script>";
-        exit;
+        Utils::alert($msg);
     }
 }
 
@@ -286,26 +274,7 @@ if (!function_exists('throttle')) {
      */
     function throttle(string $key, int $limit, int $ttl)
     {
-        $now = time();
-        $len = 0;
-
-        if (Svc::redis()->lLen($key) < $limit) {
-            $len = Svc::redis()->lPush($key, $now);
-        } else {
-            $earliest = intval(Svc::redis()->lIndex($key, -1));
-            if ($now - $earliest < $ttl) {
-                Svc::redis()->expire($key, $ttl);
-                AppException::panic(10001001, [
-                    'reset' => $earliest + $ttl,
-                ]);
-            } else {
-                Svc::redis()->lTrim($key, 1, 0);
-                $len = Svc::redis()->lPush($key, $now);
-            }
-        }
-
-        Svc::redis()->expire($key, $ttl);
-        return $limit - $len;
+        return Utils::throttle($key, $limit, $ttl);
     }
 }
 
