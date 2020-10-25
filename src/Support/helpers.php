@@ -210,7 +210,6 @@ if (!function_exists('request')) {
 if (!function_exists('back')) {
     /**
      * 网页后退
-     * <p>`back()` 网页跳转回上一步</p>
      */
     function back()
     {
@@ -222,13 +221,26 @@ if (!function_exists('back')) {
 if (!function_exists('redirect')) {
     /**
      * 网页跳转
-     * <p>`redirect('/foo/bar')` 跳转到当前域名的`/foo/bar`地址去</p>
-     * <p>`redirect('https://google.com')` 跳转到谷歌</p>
+     * <p>redirect('/foo/bar') 跳转到当前域名的 /foo/bar 地址去</p>
+     * <p>redirect('https://google.com') 跳转到谷歌</p>
      * @param string $url
      */
     function redirect(string $url)
     {
         header('Location: ' . $url);
+        exit;
+    }
+}
+
+if (!function_exists('alert')) {
+    /**
+     * JS alert() 并跳转回上一页
+     * @param string $msg
+     * @return string
+     */
+    function alert(string $msg)
+    {
+        echo "<script>alert('{$msg}');location.href='{$_SERVER['HTTP_REFERER']}'</script>";
         exit;
     }
 }

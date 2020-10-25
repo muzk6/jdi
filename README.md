@@ -328,10 +328,11 @@ function svc_foo()
 - `assign('firstName', 'Hello')` 定义模板变量
 - `return view('demo', ['title' => $title])` 定义模板变量的同时返回渲染内容
 
-#### `back()`, `redirect()` 网页跳转
+#### `back()`, `redirect()`, `alert()` 网页跳转
 
-- `return back()` 跳转回上一步
-- `return redirect('/demo')` 跳转到 `/demo`
+- `back()` 网页后退
+- `redirect('/demo')` 跳转到 `/demo`
+- `alert()` JS alert() 并跳转回上一页
 
 ## 登录
 
