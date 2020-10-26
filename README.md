@@ -210,6 +210,7 @@ d | double
 
 在路由回调里使用
 
+- `return [];` { "s": true, "c": 0, "m": "", "d": {} }
 - `return ['foo' => 1];` { "s": true, "c": 0, "m": "", "d": { "foo": 1 } }
 - `return api_msg('保存成功');` { "s": true, "c": 0, "m": "保存成功", "d": {} }
 - `panic();` { "s": false, "c": 0, "m": "", "d": {} }
