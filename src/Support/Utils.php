@@ -69,7 +69,7 @@ class Utils
     public static function api_json($state, array $data = [], string $message = '', int $code = 0)
     {
         // 先刷出 buffer, 避免被后面的 header 影响
-        if (ob_get_status()) {
+        if (ob_get_length()) {
             ob_flush();
             flush();
         }
