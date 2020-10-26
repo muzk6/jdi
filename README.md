@@ -58,7 +58,7 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
 
 - 变量名小驼峰，与数据库字段、数组键、URL中的参数统一
 - 方法名小驼峰，与面向对象统一
-- 函数名下划线，与面积过程、内置函数统一
+- 函数名下划线，与面向过程、内置函数统一
 
 ## 路由
 
@@ -118,7 +118,7 @@ Just Do It!
 ```php
 $first_name = input('post.first_name');
 $last_name = input('last_name');
-var_dump($first_name, $last_name);exit;
+var_dump($first_name, $last_name);
 ```
 
 ### 不验证，统一获取
@@ -127,7 +127,7 @@ var_dump($first_name, $last_name);exit;
 input('post.first_name');
 input('last_name');
 $request = request();
-var_dump($request);exit;
+var_dump($request);
 ```
 
 ### 部分验证，一个一个获取
@@ -135,7 +135,7 @@ var_dump($request);exit;
 ```php
 $first_name = input('post.first_name');
 $last_name = validate('last_name')->required()->get('名字');
-var_dump($first_name, $last_name);exit;
+var_dump($first_name, $last_name);
 ```
 
 ### 部分验证，统一获取
@@ -144,7 +144,7 @@ var_dump($first_name, $last_name);exit;
 input('post.first_name');
 validate('last_name')->required()->setTitle('名字');
 $request = request();
-var_dump($request);exit;
+var_dump($request);
 ```
 
 ### 串联短路方式验证（默认）
@@ -155,6 +155,7 @@ var_dump($request);exit;
 validate('post.first_name')->required();
 validate('last_name')->required()->setTitle('名字');
 $request = request(); // 以串联短路方式验证
+var_dump($request);
 ```
 
 *串联结果*
@@ -211,10 +212,11 @@ d | double
 
 - `return ['foo' => 1];` { "s": true, "c": 0, "m": "", "d": { "foo": 1 } }
 - `return api_msg('保存成功');` { "s": true, "c": 0, "m": "保存成功", "d": {} }
+- `panic();` { "s": false, "c": 0, "m": "", "d": {} }
 - `panic('保存失败');` { "s": false, "c": 0, "m": "保存失败", "d": {} }
 - `panic('保存失败', ['foo' => 1]);` { "s": false, "c": 0, "m": "保存失败", "d": { "foo": 1 } }
 - `panic(10001000);` { "s": false, "c": 10001000, "m": "参数错误", "d": {} }; 参考翻译文件 lang_zh_CN.php
-- `panic([10002001, 'name' => 'tom']);`  { "s": false, "c": 10002001, "m": "欢迎 tom", "d": {} }
+- `panic([10002001, 'name' => 'tom']);` { "s": false, "c": 10002001, "m": "欢迎 tom", "d": {} }
 
 以上方式都是 `return api_json()` 的衍生，更多需求可直接调用 `api_json()`
 
@@ -256,7 +258,7 @@ function svc_foo()
 - 配置文件 `config/mysql.php`
 - 用例参考 `tests/phpunit/Services/DBTest.php`
 
-如果想同时使用 SQLite 等数据库, 参考复制 `mysql.php` 为新的数据库配置文件，按需配置 dsn，再注册容器即可(参考 `services.php` `svc_mysql()`)
+如果想同时使用 SQLite 等数据库, 复制 `mysql.php` 为新的数据库配置文件，按需配置 dsn，再注册容器即可(参考 `services.php` `svc_mysql()`)
 
 ## `helpers` 其它辅助函数用例
 
@@ -282,7 +284,7 @@ function svc_foo()
 
 各日志文件说明：
 
-- `standard_xxx.log` PHP 标准错误处理程序写的日志，比较精简，但只能它才能记录 Fatal Error, Parse Error
+- `standard_xxx.log` PHP 标准错误处理程序写的日志，比较精简，但能记录 Fatal Error, Parse Error
 - `error_xxx.log` 框架写的错误日志，比较详细
 - `app_xx.log` 用户写的默认日志，文件名可以修改，由 `logfile()` 参数3控制 
 
@@ -375,8 +377,6 @@ svc_auth()->logout(); // 退出登录
 
 日志默认位于 `data/xdebug_trace/`
 
-*注意：请确保对 `data/` 目录有写权限*
-
 #### 依赖
 
 `ext-xdebug`
@@ -396,8 +396,6 @@ svc_auth()->logout(); // 退出登录
 
 日志默认位于 `data/xhprof/`
 
-*注意：请确保对 `data/` 目录有写权限*
-
 #### 依赖
 
 [扩展 tideways_xhprof](https://github.com/tideways/php-xhprof-extension/releases)
@@ -405,4 +403,4 @@ svc_auth()->logout(); // 退出登录
 #### 使用
 
 - 配置文件 `config/xhprof.php`
-- `enable` 设置为 `1`, 即可记录大于指定耗时的请求
+- `enable` 设置为 `1`, 即可记录大于等于指定耗时的请求
