@@ -27,7 +27,7 @@ route_group(function () {
     });
 
     // url: /, /index
-    route_get_re('#^/(index)?$#', function () {
+    route_get('#^/(index)?$#', function () {
         echo '主页<br>';
         echo '匹配路由：' . json_encode(svc_router()->getMatchedRoute(), JSON_UNESCAPED_SLASHES) . '<br>';
         echo '正则捕获：' . json_encode(svc_router()->getREMatches()) . '<br>';

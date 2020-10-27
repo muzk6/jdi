@@ -12,7 +12,7 @@ route_middleware(function () {
 });
 
 // url例子: /demo/foo
-route_any_re('#^/(?<ct>[a-zA-Z_\d]+)/?(?<ac>[a-zA-Z_\d]+)?/?$#', function () {
+route_any('#^/(?<ct>[a-zA-Z_\d]+)/?(?<ac>[a-zA-Z_\d]+)?/?$#', function () {
     $matches = svc_router()->getREMatches();
     echo "Controller：{$matches['ct']}<br>";
     echo "Action：{$matches['ac']}<br>";

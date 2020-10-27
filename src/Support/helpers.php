@@ -427,7 +427,7 @@ if (!function_exists('svc_rabbitmq')) {
 if (!function_exists('route_get')) {
     /**
      * 注册回调 GET 请求
-     * @param string $url url全匹配
+     * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
      */
     function route_get($url, callable $action)
@@ -439,7 +439,7 @@ if (!function_exists('route_get')) {
 if (!function_exists('route_post')) {
     /**
      * 注册回调 POST 请求
-     * @param string $url url全匹配
+     * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
      */
     function route_post($url, callable $action)
@@ -451,7 +451,7 @@ if (!function_exists('route_post')) {
 if (!function_exists('route_any')) {
     /**
      * 注册回调任何请求
-     * @param string $url url全匹配
+     * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
      */
     function route_any($url, callable $action)
@@ -465,9 +465,11 @@ if (!function_exists('route_get_re')) {
      * 注册回调 GET 请求
      * @param string $url url正则匹配
      * @param callable $action
+     * @deprecated
      */
     function route_get_re($url, callable $action)
     {
+        trigger_error('v1.3 将弃用，请使用 route_get() 代替。');
         Svc::router()->addRoute('GET', $url, $action, ['url_type' => 'regexp']);
     }
 }
@@ -477,9 +479,11 @@ if (!function_exists('route_post_re')) {
      * 注册回调 POST 请求
      * @param string $url url正则匹配
      * @param callable $action
+     * @deprecated
      */
     function route_post_re($url, callable $action)
     {
+        trigger_error('v1.3 将弃用，请使用 route_post() 代替。');
         Svc::router()->addRoute('POST', $url, $action, ['url_type' => 'regexp']);
     }
 }
@@ -489,9 +493,11 @@ if (!function_exists('route_any_re')) {
      * 注册回调任何请求
      * @param string $url url正则匹配
      * @param callable $action
+     * @deprecated
      */
     function route_any_re($url, callable $action)
     {
+        trigger_error('v1.3 将弃用，请使用 route_any() 代替。');
         Svc::router()->addRoute('ANY', $url, $action, ['url_type' => 'regexp']);
     }
 }

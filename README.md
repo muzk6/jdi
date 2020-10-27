@@ -65,13 +65,12 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
 ### 注册路由
 
 - `route_get()` 注册回调 GET 请求
-    - `route_get_re()` 正则匹配
 - `route_post()` 注册回调 POST 请求
-    - `route_post_re()` 正则匹配 
 - `route_any()` 注册回调任何请求
-    - `route_any_re()` 正则匹配
 - `route_middleware()` 注册路由中间件，顺序执行，组内优先
 - `route_group()` 路由分组，隔离中间件
+
+其中参数 url: `/demo` 全匹配；`#/demo#` 正则匹配(`#`开头自动切换为正则模式)；更多高级用法可使用 `\JDI\Services\Router::addRoute`
 
 ### 用例
 

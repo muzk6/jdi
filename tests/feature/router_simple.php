@@ -31,7 +31,7 @@ route_group(function () {
     /**
      * 主页
      */
-    route_get_re('#^/demo(/index)?$#', function () {
+    route_get('#^/demo(/index)?$#', function () {
         $title = input('get.title', 'JDI Demo');
 
         assign('first_name', 'Hello'); // 定义模板变量

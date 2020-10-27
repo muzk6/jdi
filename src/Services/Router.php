@@ -63,13 +63,24 @@ class Router
     /**
      * 添加路由
      * @param string $method
-     * @param string $url
+     * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
-     * @param array $opts
+     * @param array $opts ['url_type' => 'regexp'] 显式使用正则匹配
      */
     public function addRoute(string $method, $url, callable $action, array $opts = [])
     {
+        if (empty($url)) {
+            trigger_error('URL 不能为空: ' . json_encode(['method' => $method, 'url' => $url], JSON_UNESCAPED_SLASHES), E_USER_WARNING);
+            return;
+        }
+
         $is_regexp = isset($opts['url_type']) && $opts['url_type'] == 'regexp';
+
+        // 没有显式指定 url_type=regexp 的情况下，# 开头的自动切换为正则模式
+        if (!$is_regexp && $url[0] === '#') {
+            $is_regexp = true;
+        }
+
         if (!$is_regexp && $url !== '/') {
             $url = rtrim($url, '/');
         }
