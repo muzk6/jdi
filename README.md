@@ -74,9 +74,11 @@ config.init_handler | null | 容器初始化回调，null 时默认调用 \JDI\A
 
 ### 用例
 
+#### 中间件
+
 ```php
 route_middleware(function () {
-    echo '中间件a1';
+    echo '中间件a1'; // 这里为了测试才用 echo，实际开发时只用于处理逻辑而不需要打印
 });
 
 route_middleware(function () {
@@ -88,7 +90,7 @@ route_group(function () {
         echo '中间件b1';
     });
 
-    route_get('/', function () {
+    route_get('/mid', function () {
         return 'Just Do It!';
     });
 });
@@ -98,7 +100,7 @@ route_middleware(function () {
 });
 ```
 
-输出如下：
+GET 请求 `/mid` 输出：
 ```
 中间件b1
 中间件a1
@@ -106,6 +108,32 @@ route_middleware(function () {
 Just Do It!
 中间件a3
 ```
+
+#### 异常处理
+
+```php
+// 不指定参数三，用默认方式
+route_post('/xhr', function () {
+    panic();
+});
+
+// 指定参数三，自定义异常处理
+route_post('/doc', function () {
+    panic('doc error');
+}, function (Exception $exception) {
+    if ($exception instanceof AppException) {
+        // 只提示业务异常
+        alert($exception->getMessage());
+    } else {
+        // 非业务异常不提示
+        back();
+    }
+});
+```
+
+POST 请求 `/xhr` 输出：`{ "s": false, "c": 0, "m": "", "d": {} }`
+
+POST 请求 `/doc` 输出 `alert()` 弹层：`doc error`
 
 ## 请求参数
 > 获取、过滤、表单验证、类型强转 请求参数 `$_GET,$_POST` 支持 `payload`
