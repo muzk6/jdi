@@ -61,6 +61,16 @@ class Router
     protected $status_404_handler;
 
     /**
+     * @var array 重复注册的路由
+     */
+    private $duplicate_route = [];
+
+    /**
+     * @var bool 是否已执行分发
+     */
+    private $is_dispatch = false;
+
+    /**
      * 添加路由
      * @param string $method
      * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
@@ -87,9 +97,8 @@ class Router
 
         $method = strtoupper($method);
         $hash = md5("{$method}_{$url}_{$is_regexp}");
-        static $duplicate = [];
 
-        if (isset($duplicate[$hash])) {
+        if (isset($this->duplicate_route[$hash])) {
             trigger_error('路由重复注册: ' . json_encode(['method' => $method, 'url' => $url, 'is_regexp' => $is_regexp], JSON_UNESCAPED_SLASHES), E_USER_WARNING);
             return;
         }
@@ -102,7 +111,7 @@ class Router
             'is_regexp' => $is_regexp,
             'action' => $action,
         ];
-        $duplicate[$hash] = 1;
+        $this->duplicate_route[$hash] = 1;
     }
 
     /**
@@ -148,11 +157,11 @@ class Router
      */
     public function dispatch()
     {
-        static $doing = false;
-        if ($doing) { // 防止重复执行
+        if ($this->is_dispatch) {
+            // 防止重复执行
             return;
         } else {
-            $doing = true;
+            $this->is_dispatch = true;
         }
 
         $request_url = parse_url(rawurldecode($_SERVER['REQUEST_URI']), PHP_URL_PATH);
