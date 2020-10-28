@@ -223,6 +223,19 @@ class Request
      */
     public function request(bool $in_parallel = false)
     {
+        // 把没有手动调用 input() 的参数进行 input()
+        $request_method = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
+        if ($request_method === 'get') {
+            $keys = array_keys($_GET);
+        } else {
+            $keys = array_keys($_POST);
+        }
+
+        $keys = array_diff($keys, array_keys($this->request));
+        foreach ($keys as $key) {
+            $this->input($key);
+        }
+
         $data = [];
         $errors = [];
         foreach ($this->request as $k => $v) {

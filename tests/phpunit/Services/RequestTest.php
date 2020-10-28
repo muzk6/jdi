@@ -73,6 +73,17 @@ class RequestTest extends TestCase
         $this->assertEquals(['name' => 'a', 'last' => 'z'], $all);
     }
 
+    public function testRequest_all()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = ['name' => '1', 'middle' => '2', 'last' => '3'];
+        input('name:i');
+
+        $all = request();
+        $this->assertEquals(['name' => '1', 'middle' => '2', 'last' => '3'], $all);
+        $this->assertIsInt($all['name']);
+    }
+
     public function testRequest_validate()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
