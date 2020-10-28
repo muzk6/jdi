@@ -115,7 +115,7 @@ Just Do It!
 ### 不验证，一个一个获取
 
 ```php
-$first_name = input('post.first_name');
+$first_name = input('first_name');
 $last_name = input('last_name');
 var_dump($first_name, $last_name);
 ```
@@ -123,8 +123,6 @@ var_dump($first_name, $last_name);
 ### 不验证，统一获取
 
 ```php
-input('post.first_name');
-input('last_name');
 $request = request();
 var_dump($request);
 ```
@@ -132,7 +130,7 @@ var_dump($request);
 ### 部分验证，一个一个获取
 
 ```php
-$first_name = input('post.first_name');
+$first_name = input('first_name');
 $last_name = validate('last_name')->required()->get('名字');
 var_dump($first_name, $last_name);
 ```
@@ -140,7 +138,6 @@ var_dump($first_name, $last_name);
 ### 部分验证，统一获取
 
 ```php
-input('post.first_name');
 validate('last_name')->required()->setTitle('名字');
 $request = request();
 var_dump($request);
@@ -151,7 +148,7 @@ var_dump($request);
 遇到验证不通过时，立即终止后面的验证
 
 ```php
-validate('post.first_name')->required();
+validate('first_name')->required();
 validate('last_name')->required()->setTitle('名字');
 $request = request(); // 以串联短路方式验证
 var_dump($request);
@@ -174,7 +171,7 @@ var_dump($request);
 即使前面的验证不通过，也会继续验证后面的字段
 
 ```php
-validate('post.first_name')->required();
+validate('first_name')->required();
 validate('last_name')->required()->setTitle('名字');
 $request = request(true); // 以并联方式验证
 ```
