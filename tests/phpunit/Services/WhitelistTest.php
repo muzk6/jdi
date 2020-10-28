@@ -25,6 +25,11 @@ class WhitelistTest extends TestCase
         });
     }
 
+    public static function tearDownAfterClass()
+    {
+        App::unset('JDI\Support\Svc::whitelist');
+    }
+
     public function testIsSafeUserId()
     {
         svc_auth()->login(1010);

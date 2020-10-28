@@ -10,7 +10,7 @@
  */
 
 
-namespace JDI\Services;
+namespace JDI\Tests\Services;
 
 use JDI\App;
 use JDI\Exceptions\AppException;
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
-    protected function setUp()
+    protected function tearDown()
     {
         $_SERVER['REQUEST_METHOD'] = '';
         $_POST = $_GET = $_REQUEST = [];
