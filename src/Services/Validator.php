@@ -49,7 +49,7 @@ class Validator
 
     /**
      * 验证并返回参数值
-     * @param string $title 用户角度的字段名
+     * @param string $title 用户角度的字段名，如果有自定义 message 则标题无效
      * @return bool
      * @throws AppException
      */
@@ -67,7 +67,7 @@ class Validator
     }
 
     /**
-     * 用户角度的字段名
+     * 用户角度的字段名，如果有自定义 message 则标题无效
      * @param string $title
      * @return Validator
      */

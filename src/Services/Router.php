@@ -192,7 +192,7 @@ class Router
                         'is_regexp' => $route_value['is_regexp'],
                     ];
 
-                    // 路由后置勾子，register_shutdown_function 防止开发者业务逻辑里 exit
+                    // 路由后置勾子，register_shutdown_function 兼容开发者业务逻辑里 exit
                     register_shutdown_function(function () use ($route_index, $route_value) {
                         $this->runMiddleware(array_slice($this->routes, $route_index + 1), $route_value['group'][0]);
                     });

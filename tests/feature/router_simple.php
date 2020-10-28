@@ -32,7 +32,7 @@ route_group(function () {
      * 主页
      */
     route_get('#^/demo(/index)?$#', function () {
-        $title = input('get.title', 'JDI Demo');
+        $title = input('title', 'JDI Demo');
 
         assign('first_name', 'Hello'); // 定义模板变量
         assign('last_name', 'JDI');
@@ -49,7 +49,7 @@ route_group(function () {
             xsrf_check();
 
             // 部分验证，一个一个获取
-            $first_name = input('post.first_name');
+            $first_name = input('first_name');
             $last_name = validate('last_name')->required()->get('名字');
 
             // 部分验证，全部获取

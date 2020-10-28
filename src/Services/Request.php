@@ -41,10 +41,10 @@ class Request
 
     /**
      * 选择请求参数池 $_GET, $POST, $_REQUEST
-     * @param null|string $method
+     * @param string $method
      * @return array
      */
-    protected function pool($method = null)
+    protected function pool($method = '')
     {
         switch ($method) {
             case 'get':
@@ -53,9 +53,9 @@ class Request
             case 'request':
                 $bucket = &$_REQUEST;
                 break;
+            case 'post':
             default:
-                if (isset($_SERVER['HTTP_CONTENT_TYPE'])
-                    && strpos(strtolower($_SERVER['HTTP_CONTENT_TYPE']), 'application/json') !== false) {
+                if (isset($_SERVER['HTTP_CONTENT_TYPE']) && strpos(strtolower($_SERVER['HTTP_CONTENT_TYPE']), 'application/json') !== false) {
                     if (is_null($this->payload)) {
                         $this->payload = (array)json_decode(file_get_contents('php://input'), true);
                     }
@@ -82,7 +82,8 @@ class Request
             $bucket = $this->pool($key_dot[0]);
             $name = $key_dot[1];
         } else {
-            $bucket = $this->pool();
+            $request_method = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : '';
+            $bucket = $this->pool($request_method);
             $name = $key;
         }
 
@@ -140,11 +141,20 @@ class Request
     {
         list($bucket, $field_name, $field_type) = $this->parse($field);
 
-        // 是否为空，取默认值
-        if (isset($bucket[$field_name]) && strlen(strval($bucket[$field_name]))) {
-            // 类型转换
-            $field_value = trim(strval($bucket[$field_name]));
+        if (isset($bucket[$field_name])) {
+            if (is_array($bucket[$field_name])) {
+                // 本身就是数组
+                $field_value = $bucket[$field_name];
+                $field_type = 'a';
+            } elseif (strlen(strval($bucket[$field_name]))) {
+                // 去掉前后空格
+                $field_value = trim(strval($bucket[$field_name]));
+            } else {
+                // 空取默认值
+                $field_value = $default;
+            }
         } else {
+            // 不存在取默认值
             $field_value = $default;
         }
 
@@ -159,13 +169,13 @@ class Request
     /**
      * 从 $_GET, $_POST 获取请求参数，支持 payload
      * <p>
-     * 简单用例：input('age') 即 $_POST['age'] <br>
+     * 简单用例：input('age') 即 GET 请求时取 $_GET['age']; POST 请求时 $_POST['age'] <br>
      * 高级用例：input('post.age:i', 18, function ($val) { return $val+1; }) <br>
-     * 即 $_POST['age']不存在时默认为18，最终返回 intval($_GET['age'])+1
+     * 即 $_POST['age']不存在时默认为18，最终返回 intval($_POST['age'])+1
      * @param string $field [(post|get|request).]<field_name>[.(i|b|a|f|d|s)]<br>
-     * 参数池默认为 $_POST<br>
+     * 没有指定 post, get, request 时，自动根据请求方式从 $_GET, $_POST 里取变量<br>
      * field_name 为字段名<br>
-     * 类型强转：i=int, b=bool, a=array, f=float, d=double, s=string(默认)
+     * 类型强转：i=int, b=bool, a=array(本身是数组时自动强制切换为a), f=float, d=double, s=string(默认)
      * @param mixed $default 默认值
      * @param callable $after 后置回调函数，其返回值将覆盖原字段值<br>
      * 回调函数格式为 function ($v, $k) {}<br>
@@ -175,12 +185,13 @@ class Request
     public function input(string $field, $default = '', callable $after = null)
     {
         list($field_name, $field_value, $field_type) = $this->getValue($field, $default, $after);
+        $new_value = $this->convert($field_value, $field_type);
 
         $this->request[$field_name] = [
-            'value' => $this->convert($field_value, $field_type),
+            'value' => $new_value,
         ];
 
-        return $field_value;
+        return $new_value;
     }
 
     /**
