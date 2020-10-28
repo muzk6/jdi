@@ -45,21 +45,19 @@ route_group(function () {
      * 同步请求
      */
     route_post('/demo/doc', function () {
-        try {
-            xsrf_check();
+        xsrf_check();
 
-            // 部分验证，一个一个获取
-            $first_name = input('first_name');
-            $last_name = validate('last_name')->required()->get('名字');
+        // 部分验证，一个一个获取
+        $first_name = input('first_name');
+        $last_name = validate('last_name')->required()->get('名字');
 
-            // 部分验证，全部获取
-            $request = request();
+        // 部分验证，全部获取
+        $request = request();
 
-            // alert() 用例
-            alert(json_encode(['first_name' => $first_name, 'last_name' => $last_name, 'request' => $request]));
-        } catch (AppException $app_exception) {
-            alert($app_exception->getMessage());
-        }
+        // alert() 用例
+        alert(json_encode(['first_name' => $first_name, 'last_name' => $last_name, 'request' => $request]));
+    }, function (Exception $exception) {
+        alert($exception->getMessage());
     });
 
     /**
@@ -82,37 +80,27 @@ route_group(function () {
      * 登录
      */
     route_post('/demo/login', function () {
-        try {
-            xsrf_check();
+        xsrf_check();
 
-            $user_id = validate('user_id:i')->gt(0)->get('用户ID ');
+        $user_id = validate('user_id:i')->gt(0)->get('用户ID ');
 
-            svc_auth()->login($user_id);
-            flash_set('msg', '登录成功'); // flash_set() 用例，配合 302 跳转，在页面用 flash_get() 取提示内容
+        svc_auth()->login($user_id);
+        flash_set('msg', '登录成功'); // flash_set() 用例，配合 302 跳转，在页面用 flash_get() 取提示内容
 
-            redirect('/demo');
-        } catch (AppException $app_exception) {
-            flash_set('msg', $app_exception->getMessage());
-            back();
-        }
-    });
+        redirect('/demo');
+    }, 'catch_doc');
 
     /**
      * 注销
      */
     route_post('/demo/logout', function () {
-        try {
-            xsrf_check();
+        xsrf_check();
 
-            svc_auth()->logout();
-            flash_set('msg', '注销成功');
+        svc_auth()->logout();
+        flash_set('msg', '注销成功');
 
-            redirect('/demo');
-        } catch (AppException $app_exception) {
-            flash_set('msg', $app_exception->getMessage());
-            back();
-        }
-    });
+        redirect('/demo');
+    }, 'catch_doc');
 });
 
 route_middleware(function () {
@@ -123,3 +111,16 @@ route_middleware(function () {
 });
 
 svc_router()->dispatch();
+
+/**
+ * DOC 请求异常回调
+ * @param Exception $exception
+ */
+function catch_doc(Exception $exception)
+{
+    if ($exception instanceof AppException) {
+        flash_set('msg', $exception->getMessage());
+    }
+
+    back();
+}

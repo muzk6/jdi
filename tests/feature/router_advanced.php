@@ -86,7 +86,7 @@ route_group(function () {
 route_group(function () {
     route_middleware(function () {
         echo '子组C 前置中间件1，抛出异常，或者 exit，跳过后面的所有前置中间件和路由回调，但不影响后置中间件<br>';
-        panic('抛出 AppException');
+        panic('throw AppException');
     });
 
     route_middleware(function () {
@@ -112,7 +112,7 @@ route_group(function () {
 
 route_middleware(function () {
     echo '根组 后置中间件1<br>';
-    echo '异常: ' . (svc_router()->getAppException() ? '有' : '无') . '<br>';
+    echo '异常: ' . (svc_router()->getException() ? '有' : '无') . '<br>';
 });
 
 route_middleware(function () {

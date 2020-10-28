@@ -50,10 +50,10 @@ class Router
     protected $re_matches = [];
 
     /**
-     * 业务异常
-     * @var AppException|null
+     * 异常
+     * @var \Exception
      */
-    protected $app_exception;
+    protected $exception;
 
     /**
      * @var callable 响应 404 的回调函数
@@ -75,7 +75,8 @@ class Router
      * @param string $method
      * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
-     * @param array $opts ['url_type' => 'regexp'] 显式使用正则匹配
+     * @param array $opts url_type: URL 匹配模式; regexp: 正则匹配; normal: 默认，全匹配;<br>
+     * catch: 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
     public function addRoute(string $method, $url, callable $action, array $opts = [])
     {
@@ -84,9 +85,11 @@ class Router
             return;
         }
 
-        $is_regexp = isset($opts['url_type']) && $opts['url_type'] == 'regexp';
+        $url_type = $opts['url_type'] ?? 'normal';
+        $catch = $opts['catch'] ?? null;
 
         // 没有显式指定 url_type=regexp 的情况下，# 开头的自动切换为正则模式
+        $is_regexp = $url_type == 'regexp';
         if (!$is_regexp && $url[0] === '#') {
             $is_regexp = true;
         }
@@ -110,6 +113,7 @@ class Router
             'url' => $url,
             'is_regexp' => $is_regexp,
             'action' => $action,
+            'catch' => $catch,
         ];
         $this->duplicate_route[$hash] = 1;
     }
@@ -219,8 +223,14 @@ class Router
                         } else {
                             echo strval($out);
                         }
-                    } catch (AppException $app_exception) {
-                        echo Utils::api_json($this->app_exception = $app_exception);
+                    } catch (\Exception $exception) {
+                        $this->exception = $exception;
+
+                        if (is_callable($route_value['catch'])) {
+                            call_user_func($route_value['catch'], $exception);
+                        } elseif ($exception instanceof AppException) {
+                            echo Utils::api_json($exception);
+                        }
                     }
 
                     return;
@@ -310,12 +320,12 @@ class Router
     }
 
     /**
-     * 业务异常
-     * @return AppException|null
+     * 异常，通常用于在后置中间件做处理
+     * @return \Exception|null
      */
-    public function getAppException()
+    public function getException()
     {
-        return $this->app_exception;
+        return $this->exception;
     }
 
 }

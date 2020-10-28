@@ -429,10 +429,11 @@ if (!function_exists('route_get')) {
      * 注册回调 GET 请求
      * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
+     * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_get($url, callable $action)
+    function route_get($url, callable $action, callable $catch = null)
     {
-        Svc::router()->addRoute('GET', $url, $action);
+        Svc::router()->addRoute('GET', $url, $action, ['catch' => $catch]);
     }
 }
 
@@ -441,10 +442,11 @@ if (!function_exists('route_post')) {
      * 注册回调 POST 请求
      * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
+     * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_post($url, callable $action)
+    function route_post($url, callable $action, callable $catch = null)
     {
-        Svc::router()->addRoute('POST', $url, $action);
+        Svc::router()->addRoute('POST', $url, $action, ['catch' => $catch]);
     }
 }
 
@@ -453,10 +455,11 @@ if (!function_exists('route_any')) {
      * 注册回调任何请求
      * @param string $url '/demo' 全匹配；'#/demo#' 正则匹配
      * @param callable $action
+     * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_any($url, callable $action)
+    function route_any($url, callable $action, callable $catch = null)
     {
-        Svc::router()->addRoute('ANY', $url, $action);
+        Svc::router()->addRoute('ANY', $url, $action, ['catch' => $catch]);
     }
 }
 
