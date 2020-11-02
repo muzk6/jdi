@@ -100,6 +100,21 @@ class MessageQueue
     }
 
     /**
+     * 完整队列名
+     * @param string $queue
+     * @return string
+     */
+    public function getQueueName(string $queue)
+    {
+        if (empty($this->host)) {
+            trigger_error('请先初始化连接 \JDI\Services\MessageQueue::getConnection', E_USER_WARNING);
+            return $queue;
+        }
+
+        return "{$this->host['queue_prefix']}{$queue}";
+    }
+
+    /**
      * 消息队列发布
      * @param string $queue 队列名称
      * @param array $data
@@ -108,12 +123,16 @@ class MessageQueue
      */
     public function publish(string $queue, array $data, string $exchange_name = '', string $exchange_type = '')
     {
+        $connection = $this->getConnection(); // 先初始化连接，才有 $this->host
+
         $exchange_name || $exchange_name = $this->host['exchange_name'];
         $exchange_type || $exchange_type = $this->host['exchange_type'];
 
+        $queue = $this->getQueueName($queue);
         $channel_key = md5("publish_{$exchange_name}_{$exchange_type}_{$queue}");
+
         if (!isset($this->channels[$channel_key])) {
-            $this->channels[$channel_key] = $this->getConnection()->channel(); // 这里每次返回都是新的 channel 对象
+            $this->channels[$channel_key] = $connection->channel(); // 这里每次返回都是新的 channel 对象
             $this->channels[$channel_key]->exchange_declare($exchange_name, $exchange_type, false, true, false);
             $this->channels[$channel_key]->queue_declare($queue, false, true, false, false);
         }
@@ -139,9 +158,12 @@ class MessageQueue
 
         ini_set('memory_limit', -1);
 
+        $connection = $this->getConnection(); // 先初始化连接，才有 $this->host
+        $queue = $this->getQueueName($queue);
         $channel_key = md5("consume_{$queue}");
+
         if (!isset($this->channels[$channel_key])) {
-            $this->channels[$channel_key] = $this->getConnection()->channel(); // 这里每次返回都是新的 channel 对象
+            $this->channels[$channel_key] = $connection->channel(); // 这里每次返回都是新的 channel 对象
             $this->channels[$channel_key]->queue_declare($queue, false, true, false, false);
         }
 

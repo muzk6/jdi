@@ -12,5 +12,6 @@ return [
         'passwd' => 'guest',
         'exchange_name' => 'jdi.direct',
         'exchange_type' => 'direct',
+        'queue_prefix' => '', // 队列名前缀
     ],
 ];

@@ -406,7 +406,7 @@ if (!function_exists('mq_publish')) {
      * @param string $exchange_name 交换器名称
      * @param string $exchange_type 交换器类型
      */
-    function mq_publish(string $queue, array $data, string $exchange_name = 'jdi.direct', string $exchange_type = 'direct')
+    function mq_publish(string $queue, array $data, string $exchange_name = '', string $exchange_type = '')
     {
         Svc::rabbitmq()->publish($queue, $data, $exchange_name, $exchange_type);
     }
