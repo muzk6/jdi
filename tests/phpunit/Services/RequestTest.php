@@ -20,9 +20,11 @@ class RequestTest extends TestCase
 {
     protected function tearDown()
     {
+        App::$app = null;
+        App::init();
+
         $_SERVER['REQUEST_METHOD'] = '';
         $_POST = $_GET = $_REQUEST = [];
-        App::unset('JDI\Support\Svc::request');
     }
 
     public function testFlash()

@@ -8,6 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class AppTest extends TestCase
 {
+    protected function setUp()
+    {
+        App::$app = null;
+        App::init();
+    }
+
     public function testGet()
     {
         App::set('test_value', 123);
@@ -15,7 +21,6 @@ class AppTest extends TestCase
 
         App::set('test_value', 456);
         $this->assertEquals(456, App::get('test_value'));
-
 
         App::set('test_callable', function () {
             return 'ok';
@@ -26,6 +31,14 @@ class AppTest extends TestCase
         App::set('test_callable', function () {
             return 'frozen';
         });
+    }
+
+    public function testUnset()
+    {
+        App::set('test_callable', function () {
+            return 'ok';
+        });
+        $this->assertEquals('ok', App::get('test_callable'));
 
         App::unset('test_callable');
         App::set('test_callable', function () {

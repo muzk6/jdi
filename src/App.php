@@ -200,6 +200,7 @@ class App implements \ArrayAccess
     public static function unset(string $name)
     {
         unset(static::$app[$name]);
+        unset(static::$app->frozen[$name]);
     }
 
     /**

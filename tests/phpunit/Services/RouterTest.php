@@ -19,7 +19,8 @@ class RouterTest extends TestCase
 {
     protected function tearDown()
     {
-        App::unset('JDI\Support\Svc::router');
+        App::$app = null;
+        App::init();
     }
 
     public function testAddMiddleware_root()
