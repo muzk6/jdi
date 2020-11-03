@@ -107,11 +107,11 @@ class MessageQueue
     public function getQueueName(string $queue)
     {
         if (empty($this->host)) {
-            trigger_error('请先初始化连接 \JDI\Services\MessageQueue::getConnection', E_USER_WARNING);
+            trigger_error('请先调用初始化连接: \JDI\Services\MessageQueue::getConnection', E_USER_WARNING);
             return $queue;
         }
 
-        return "{$this->host['queue_prefix']}{$queue}";
+        return ($this->host['queue_prefix'] ?? '') . $queue;
     }
 
     /**
