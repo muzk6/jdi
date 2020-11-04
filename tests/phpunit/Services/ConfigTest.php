@@ -11,8 +11,7 @@ class ConfigTest extends TestCase
 
     public static function setUpBeforeClass()
     {
-        App::$app = null;
-        App::init();
+        App::reinitialize();
 
         self::$display_errors = ini_get('display_errors');
         ini_set('display_errors', 0);

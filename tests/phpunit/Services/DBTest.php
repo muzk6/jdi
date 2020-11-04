@@ -10,8 +10,7 @@ class DBTest extends TestCase
 {
     public static function setUpBeforeClass()
     {
-        App::$app = null;
-        App::init();
+        App::reinitialize();
 
         $sql = "DROP TABLE IF EXISTS `test`;
                 CREATE TABLE `test` (

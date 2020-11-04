@@ -18,10 +18,9 @@ use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
-    protected function tearDown()
+    protected function setUp()
     {
-        App::$app = null;
-        App::init();
+        App::reinitialize();
 
         $_SERVER['REQUEST_METHOD'] = '';
         $_POST = $_GET = $_REQUEST = [];

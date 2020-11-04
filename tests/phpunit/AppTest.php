@@ -33,6 +33,14 @@ class AppTest extends TestCase
         });
     }
 
+    public function testIsset()
+    {
+        App::set('ok', 1);
+
+        $this->assertEquals(true, App::isset('ok'));
+        $this->assertEquals(false, App::isset('no'));
+    }
+
     public function testUnset()
     {
         App::set('test_callable', function () {
@@ -42,6 +50,19 @@ class AppTest extends TestCase
 
         App::unset('test_callable');
         App::set('test_callable', function () {
+            return 'new ok';
+        });
+        $this->assertEquals('new ok', App::get('test_callable'));
+    }
+
+    public function testReset()
+    {
+        App::set('test_callable', function () {
+            return 'ok';
+        });
+        $this->assertEquals('ok', App::get('test_callable'));
+
+        App::reset('test_callable', function () {
             return 'new ok';
         });
         $this->assertEquals('new ok', App::get('test_callable'));
@@ -61,5 +82,26 @@ class AppTest extends TestCase
 
         $svc();
         $this->assertEquals(1, $flag);
+    }
+
+    public function testReinitialize()
+    {
+        App::$app = null;
+        App::init(['foo' => 1]);
+        App::set('bar', 1);
+        App::reinitialize();
+
+        $this->assertEquals(1, App::get('foo'));
+        $this->assertEquals(false, App::isset('bar'));
+
+        App::$app = null;
+        App::init(['foo2' => 1]);
+        App::set('bar2', 1);
+        App::reinitialize();
+
+        $this->assertEquals(1, App::get('foo2'));
+        $this->assertEquals(false, App::isset('bar2'));
+        $this->assertEquals(false, App::isset('foo'));
+        $this->assertEquals(false, App::isset('bar'));
     }
 }

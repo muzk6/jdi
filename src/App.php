@@ -22,6 +22,11 @@ class App implements \ArrayAccess
     public static $app;
 
     /**
+     * @var array \JDI\App::init 的原始参数
+     */
+    protected static $ori_values;
+
+    /**
      * @var array 容器元素
      */
     protected $values = [];
@@ -81,6 +86,7 @@ class App implements \ArrayAccess
         if (!$app) {
             $app = new static();
 
+            self::$ori_values = $values; // 重新初始化时用。必须每次重新赋值，场景是手动调用 init()
             foreach ($values as $key => $value) {
                 $app[$key] = $value;
             }
@@ -103,6 +109,17 @@ class App implements \ArrayAccess
         }
 
         return $app;
+    }
+
+    /**
+     * 使用原始参数重新初始化
+     * @return App
+     */
+    public static function reinitialize()
+    {
+        static::$app = null;
+
+        return self::init(self::$ori_values);
     }
 
     /**
@@ -174,6 +191,16 @@ class App implements \ArrayAccess
     }
 
     /**
+     * 是否有值
+     * @param string $name
+     * @return bool
+     */
+    public static function isset(string $name)
+    {
+        return isset(static::$app[$name]);
+    }
+
+    /**
      * 获取
      * @param string $name
      * @return mixed
@@ -201,6 +228,17 @@ class App implements \ArrayAccess
     {
         unset(static::$app[$name]);
         unset(static::$app->frozen[$name]);
+    }
+
+    /**
+     * 重置
+     * @param string $name
+     * @param mixed $value 回调函数能延迟加载
+     */
+    public static function reset(string $name, $value)
+    {
+        self::unset($name);
+        self::set($name, $value);
     }
 
     /**

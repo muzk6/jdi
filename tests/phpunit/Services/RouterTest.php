@@ -17,10 +17,9 @@ use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase
 {
-    protected function tearDown()
+    protected function setUp()
     {
-        App::$app = null;
-        App::init();
+        App::reinitialize();
     }
 
     public function testAddMiddleware_root()
