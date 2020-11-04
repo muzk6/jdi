@@ -135,6 +135,16 @@ POST 请求 `/xhr` 输出：`{ "s": false, "c": 0, "m": "", "d": {} }`
 
 POST 请求 `/doc` 输出 `alert()` 弹层：`doc error`
 
+#### 路由的其它方法
+
+- `\JDI\Services\Router::setStatus404Handler` 设置响应 404 的回调函数
+- `\JDI\Services\Router::fireStatus404` 触发 404 错误
+- `\JDI\Services\Router::getMatchedRoute` 成功匹配的路由
+- `\JDI\Services\Router::getREMatches` URL 正则捕获项
+- `\JDI\Services\Router::getException` 异常，通常用于在后置中间件做处理
+- `\JDI\Services\Router::setResponseContent` 设置响应内容，通常用于在后置中间件改写响应内容
+- `\JDI\Services\Router::getResponseContent` 获取响应内容
+
 ## 请求参数
 > 获取、过滤、表单验证、类型强转 请求参数 `$_GET,$_POST` 支持 `payload`
 

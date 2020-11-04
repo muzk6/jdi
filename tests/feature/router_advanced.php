@@ -4,6 +4,7 @@
  * 高级路由，中间件与路由
  * php -S 0.0.0.0:8080 router_advanced.php
  * 测试路径：/, /index, /foo, /bar
+ * 以下路由里使用 echo 是为了更容易理解中间件和路由之间的执行顺序
  */
 
 require __DIR__ . '/../init.php';

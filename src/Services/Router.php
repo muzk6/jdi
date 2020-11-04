@@ -61,6 +61,11 @@ class Router
     protected $status_404_handler;
 
     /**
+     * @var mixed 响应内容
+     */
+    private $response_content = '';
+
+    /**
      * @var array 重复注册的路由
      */
     private $duplicate_route = [];
@@ -208,6 +213,13 @@ class Router
                     // 路由后置勾子，register_shutdown_function 兼容开发者业务逻辑里 exit
                     register_shutdown_function(function () use ($route_index, $route_value) {
                         $this->runMiddleware(array_slice($this->routes, $route_index + 1), $route_value['group'][0]);
+
+                        $response_content = $this->getResponseContent();
+                        if (is_array($response_content)) {
+                            echo Utils::api_json(true, $response_content);
+                        } else {
+                            echo strval($response_content);
+                        }
                     });
 
                     Svc::xhprof()->auto();
@@ -217,12 +229,8 @@ class Router
                         // 路由前置勾子
                         $this->runMiddleware(array_slice($this->routes, 0, $route_index), $route_value['group'][0]);
 
-                        $out = call_user_func($route_value['action']);
-                        if (is_array($out)) {
-                            echo Utils::api_json(true, $out);
-                        } else {
-                            echo strval($out);
-                        }
+                        // 设置响应内容，所有中间件执行完后再 echo
+                        $this->setResponseContent(call_user_func($route_value['action']));
                     } catch (\Exception $exception) {
                         $this->exception = $exception;
 
@@ -326,6 +334,26 @@ class Router
     public function getException()
     {
         return $this->exception;
+    }
+
+    /**
+     * 设置响应内容
+     * @param $response_content
+     * @return $this
+     */
+    public function setResponseContent($response_content)
+    {
+        $this->response_content = $response_content;
+        return $this;
+    }
+
+    /**
+     * 获取响应内容
+     * @return mixed
+     */
+    public function getResponseContent()
+    {
+        return $this->response_content;
     }
 
 }

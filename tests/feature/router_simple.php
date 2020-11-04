@@ -28,17 +28,27 @@ route_group(function () {
         }
     });
 
-    /**
-     * 主页
-     */
-    route_get('#^/demo(/index)?$#', function () {
-        $title = input('title', 'JDI Demo');
+    route_group(function () {
 
-        assign('first_name', 'Hello'); // 定义模板变量
-        assign('last_name', 'JDI');
-        assign('userId', svc_auth()->getUserId());
+        /**
+         * 主页
+         */
+        route_get('#^/demo(/index)?$#', function () {
+            $title = input('title', 'JDI Demo');
 
-        return view('demo', ['title' => $title]); // 也可以在这里定义模板变量
+            assign('first_name', 'Hello'); // 定义模板变量
+            assign('last_name', 'JDI');
+            assign('userId', svc_auth()->getUserId());
+
+            return view('demo', ['title' => $title]); // 也可以在这里定义模板变量
+        });
+
+        // 此中间件和上面主页路由放在同一分组里，是后者路由的专属后置中间件
+        route_middleware(function () {
+            $content = svc_router()->getResponseContent();
+            $content .= "<br><br>在后置中间件附加的内容";
+            svc_router()->setResponseContent($content);
+        });
     });
 
     /**

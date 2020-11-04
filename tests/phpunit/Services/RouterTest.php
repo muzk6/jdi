@@ -141,4 +141,32 @@ class RouterTest extends TestCase
         svc_router()->dispatch();
     }
 
+    public function testSetResponseContent()
+    {
+        $rs = '';
+
+        route_get('/', function () {
+            return 'content';
+        });
+
+        route_middleware(function () {
+            $content = svc_router()->getResponseContent();
+            svc_router()->setResponseContent("new_{$content}");
+        });
+
+        route_middleware(function () use (&$rs) {
+            $rs = svc_router()->getResponseContent();
+        });
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/';
+        svc_router()->dispatch();
+
+        register_shutdown_function(function () use (&$rs) {
+            $this->assertEquals('new_content', $rs);
+        });
+
+        $this->assertEquals(['method' => 'GET', 'url' => '/', 'is_regexp' => false], svc_router()->getMatchedRoute());
+    }
+
 }
