@@ -217,7 +217,9 @@ class Router
                         $response_content = $this->getResponseContent();
                         if (is_array($response_content)) {
                             echo Utils::api_json(true, $response_content);
-                        } else {
+                        } elseif ($response_content instanceof AppException) {
+                            echo Utils::api_json($response_content);
+                        } elseif ($response_content) {
                             echo strval($response_content);
                         }
                     });
@@ -235,9 +237,9 @@ class Router
                         $this->exception = $exception;
 
                         if (is_callable($route_value['catch'])) {
-                            call_user_func($route_value['catch'], $exception);
-                        } elseif ($exception instanceof AppException) {
-                            echo Utils::api_json($exception);
+                            $this->setResponseContent(call_user_func($route_value['catch'], $exception));
+                        } else {
+                            $this->setResponseContent($exception);
                         }
                     }
 

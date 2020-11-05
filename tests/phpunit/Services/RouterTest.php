@@ -13,6 +13,7 @@
 namespace JDI\Tests\Services;
 
 use JDI\App;
+use JDI\Exceptions\AppException;
 use PHPUnit\Framework\TestCase;
 
 class RouterTest extends TestCase
@@ -164,6 +165,31 @@ class RouterTest extends TestCase
 
         register_shutdown_function(function () use (&$rs) {
             $this->assertEquals('new_content', $rs);
+        });
+
+        $this->assertEquals(['method' => 'GET', 'url' => '/', 'is_regexp' => false], svc_router()->getMatchedRoute());
+    }
+
+    public function testSetResponseContent_catch()
+    {
+        $rs = '';
+
+        route_get('/', function () {
+            panic('AppException');
+        }, function (AppException $exception) {
+            return 'catch:' . $exception->getMessage();
+        });
+
+        route_middleware(function () use (&$rs) {
+            $rs = svc_router()->getResponseContent();
+        });
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = '/';
+        svc_router()->dispatch();
+
+        register_shutdown_function(function () use (&$rs) {
+            $this->assertEquals('catch:AppException', $rs);
         });
 
         $this->assertEquals(['method' => 'GET', 'url' => '/', 'is_regexp' => false], svc_router()->getMatchedRoute());
