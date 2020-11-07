@@ -63,11 +63,10 @@ if (!function_exists('logfile')) {
      * @param string $index 日志名(索引)
      * @param array|string $data 日志内容
      * @param string $filename 日志文件名前缀
-     * @return int|null
      */
     function logfile(string $index, $data = '', string $filename = 'app')
     {
-        return Svc::log()->file($index, $data, $filename);
+        Svc::log()->file($index, $data, $filename);
     }
 }
 

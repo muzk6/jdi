@@ -340,6 +340,15 @@ logfile('test', ['这里写日志']);
 logfile('test', ['另一处又写日志']);
 ```
 
+`logfile()` 还有一个特性是延迟执行(脚本程序结束时才真正写日志)，因此上面例子又可以写成：
+
+```php
+logfile('test', ['这里写日志']);
+logfile('test', ['另一处又写日志']);
+
+svc_log()->setData('user_id', 123);
+```
+
 效果与前面每次都要记录 `user_id` 的例子一致
 
 #### `url()` 带协议和域名的完整URL
