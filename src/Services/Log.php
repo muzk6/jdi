@@ -49,12 +49,12 @@ class Log
      * @param string $filename 日志文件名前缀
      * @return bool|int
      */
-    public function file(string $index, $data, string $filename = 'app')
+    public function file(string $index, $data = '', string $filename = 'app')
     {
         $filename = trim(str_replace('/', '', $filename));
 
         if (!is_array($data)) {
-            $data = [$data];
+            $data = strlen($data) ? [$data] : [];
         }
         $data = array_merge($this->data, $data);
 
