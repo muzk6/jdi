@@ -322,7 +322,25 @@ function svc_foo()
 
 - `standard_xxx.log` PHP 标准错误处理程序写的日志，比较精简，但能记录 Fatal Error, Parse Error
 - `error_xxx.log` 框架写的错误日志，比较详细
-- `app_xx.log` 用户写的默认日志，文件名可以修改，由 `logfile()` 参数3控制 
+- `app_xxx.log` 用户写的默认日志，文件名可以修改，由 `logfile()` 参数3控制 
+
+通用日志字段场景：
+
+```php
+logfile('test', ['user_id' => 123, '这里写日志']); 
+logfile('test', ['user_id' => 123, '另一处又写日志']);
+```
+
+如果像以上例子都要记录 `user_id`, 可以使用 `\JDI\Services\Log::setData` 单独把 `user_id` 设置起来，后面调用 `logfile()` 时不需要再记录 `user_id`：
+
+```php
+svc_log()->setData('user_id', 123);
+
+logfile('test', ['这里写日志']);
+logfile('test', ['另一处又写日志']);
+```
+
+效果与前面每次都要记录 `user_id` 的例子一致
 
 #### `url()` 带协议和域名的完整URL
 
