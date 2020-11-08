@@ -94,9 +94,9 @@ if (!function_exists('svc_mysql')) {
 
 if (!function_exists('db')) {
     /**
-     * Svc::mysql() 的别名
+     * svc_mysql() 的别名
      * @return PDOEngine
-     * @see Svc::mysql()
+     * @see svc_mysql()
      */
     function db()
     {
