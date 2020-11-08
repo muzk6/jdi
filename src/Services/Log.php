@@ -27,6 +27,11 @@ class Log
     protected $data = [];
 
     /**
+     * @var bool 是否自动刷写日志
+     */
+    protected $is_auto_flush = true;
+
+    /**
      * @var array 执行写日志的回调集合
      */
     protected $write_handler = [];
@@ -36,10 +41,34 @@ class Log
         $this->path_data = $conf['path_data'];
 
         register_shutdown_function(function () {
-            foreach ($this->write_handler as $handler) {
-                call_user_func($handler);
+            if ($this->is_auto_flush) {
+                $this->flush();
             }
         });
+    }
+
+    /**
+     * 是否自动刷写日志
+     * @param bool $is_auto_flush
+     */
+    public function auto_flush(bool $is_auto_flush)
+    {
+        $this->is_auto_flush = $is_auto_flush;
+    }
+
+    /**
+     * 手动刷写日志
+     */
+    public function flush()
+    {
+        while (1) {
+            $handler = array_shift($this->write_handler);
+            if (!$handler) {
+                break;
+            }
+
+            call_user_func($handler);
+        }
     }
 
     /**
@@ -70,7 +99,6 @@ class Log
             'hostname' => php_uname('n'),
             'sapi' => PHP_SAPI,
             'script_filename' => $_SERVER['SCRIPT_FILENAME'] ?? '',
-
         ];
 
         // fpm
