@@ -354,7 +354,7 @@ svc_log()->setExtraData('user_id', 123);
 默认自动刷写，特殊场景(在 `register_shutdown_function()` 之前就调用了日志有关方法)，手动刷写可参考 `\JDI\Services\Router::dispatch` 里的用法
 
 ```php
-svc_log()->auto_flush(false); // 关闭自动刷写
+svc_log()->autoFlush(false); // 关闭自动刷写
 svc_log()->flush(); // 手动刷写
 ``` 
 

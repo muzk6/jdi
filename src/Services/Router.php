@@ -211,7 +211,7 @@ class Router
                     ];
 
                     // 关闭自动刷写日志，否则与下面的后置勾子冲突
-                    svc_log()->auto_flush(false);
+                    svc_log()->autoFlush(false);
 
                     // 路由后置勾子，register_shutdown_function 兼容开发者业务逻辑里 exit
                     register_shutdown_function(function () use ($route_index, $route_value) {

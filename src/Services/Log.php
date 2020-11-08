@@ -49,7 +49,7 @@ class Log
      * 是否自动刷写日志
      * @param bool $is_auto_flush
      */
-    public function auto_flush(bool $is_auto_flush)
+    public function autoFlush(bool $is_auto_flush)
     {
         $this->is_auto_flush = $is_auto_flush;
     }
@@ -85,7 +85,7 @@ class Log
 
     /**
      * 设置刷写日志的回调
-     * @param callable $flush_handler
+     * @param callable $flush_handler function ($logs) {}
      */
     public function setFlushHandler(callable $flush_handler)
     {
