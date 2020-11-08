@@ -61,7 +61,7 @@ class ErrorHandler
             $data['backtrace'] = explode("\n", $trace);
         }
 
-        Svc::log()->file('error_handler', $data, 'error');
+        Svc::log()->push('error_handler', $data, 'error');
 
         return false;
     }
@@ -89,7 +89,7 @@ class ErrorHandler
             $data['backtrace'] = explode("\n", $trace);
         }
 
-        Svc::log()->file('exception_handler', $data, 'error');
+        Svc::log()->push('exception_handler', $data, 'error');
 
         throw $exception;
     }

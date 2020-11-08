@@ -83,9 +83,19 @@ class Svc
     public static function log()
     {
         return App::singleton(__METHOD__, function ($app) {
-            return new Log([
-                'path_data' => $app['config.path_data'] . '/log', // 日志路径
-            ]);
+            $log = new Log();
+
+            $path_data = $app['config.path_data'] . '/log'; // 日志路径
+            $log->setFlushHandler(function ($logs) use ($path_data) {
+                foreach ($logs as $v) {
+                    $v = json_encode($v, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
+
+                    $path = sprintf('%s/%s_%s.log', $path_data, $v['type'], date('Ym'));
+                    file_put_contents($path, $v . PHP_EOL, FILE_APPEND);
+                }
+            });
+
+            return $log;
         });
     }
 

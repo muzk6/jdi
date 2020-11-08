@@ -114,7 +114,7 @@ route_group(function () {
 });
 
 route_middleware(function () {
-    logfile('access', [
+    log_push('access', [
         '__POST' => $_POST,
         'route' => svc_router()->getMatchedRoute(),
     ], 'access');

@@ -314,42 +314,51 @@ function svc_foo()
 - 假设当前语言是`zh_CN`, 默认语言是`en`
 - 依次搜索`lang_zh_CN.php, lang_en.php`, 存在`10001000`这个`key`时返回第一个结果内容，都不存在时返回`''`
 
-#### `logfile()` 文件日志
+#### `log_push()` 日志推入待刷写集合
 
-`logfile('test', ['foo', 'bar'], 'login')` 把内容写到`data/log/login_20190328.log`
+`log_push('test', ['foo', 'bar'], 'login')` 把内容写到`data/log/login_20190328.log`
 
 各日志文件说明：
 
 - `standard_xxx.log` PHP 标准错误处理程序写的日志，比较精简，但能记录 Fatal Error, Parse Error
 - `error_xxx.log` 框架写的错误日志，比较详细
-- `app_xxx.log` 用户写的默认日志，文件名可以修改，由 `logfile()` 参数3控制 
+- `app_xxx.log` 用户写的默认日志，文件名可以修改，由 `log_push()` 参数3控制 
 
 通用日志字段场景：
 
 ```php
-logfile('test', ['user_id' => 123, '这里写日志']); 
-logfile('test', ['user_id' => 123, '另一处又写日志']);
+log_push('test', ['user_id' => 123, '这里写日志']); 
+log_push('test', ['user_id' => 123, '另一处又写日志']);
 ```
 
-如果像以上例子都要记录 `user_id`, 可以使用 `\JDI\Services\Log::setData` 单独把 `user_id` 设置起来，后面调用 `logfile()` 时不需要再记录 `user_id`：
+如果像以上例子都要记录 `user_id`, 可以使用 `\JDI\Services\Log::setExtraData` 单独把 `user_id` 设置起来，后面调用 `log_push()` 时不需要再记录 `user_id`：
 
 ```php
-svc_log()->setData('user_id', 123);
+svc_log()->setExtraData('user_id', 123);
 
-logfile('test', ['这里写日志']);
-logfile('test', ['另一处又写日志']);
+log_push('test', ['这里写日志']);
+log_push('test', ['另一处又写日志']);
 ```
 
-`logfile()` 还有一个特性是延迟执行(脚本程序结束时才真正写日志)，因此上面例子又可以写成：
+`log_push()` 还有一个特性是延迟执行(脚本程序结束时才真正写日志)，因此上面例子又可以写成：
 
 ```php
-logfile('test', ['这里写日志']);
-logfile('test', ['另一处又写日志']);
+log_push('test', ['这里写日志']);
+log_push('test', ['另一处又写日志']);
 
-svc_log()->setData('user_id', 123);
+svc_log()->setExtraData('user_id', 123);
 ```
 
-效果与前面每次都要记录 `user_id` 的例子一致
+手动刷写日志场景：
+
+默认自动刷写，特殊场景(在 `register_shutdown_function()` 之前就调用了日志有关方法)，手动刷写可参考 `\JDI\Services\Router::dispatch` 里的用法
+
+```php
+svc_log()->auto_flush(false); // 关闭自动刷写
+svc_log()->flush(); // 手动刷写
+``` 
+
+自定义日志引擎，参考 `\JDI\Support\Svc::log` 使用 `\JDI\Services\Log::setFlushHandler` 的例子
 
 #### `url()` 带协议和域名的完整URL
 

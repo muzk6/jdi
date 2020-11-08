@@ -57,16 +57,16 @@ if (!function_exists('trans')) {
     }
 }
 
-if (!function_exists('logfile')) {
+if (!function_exists('log_push')) {
     /**
-     * 文件日志
-     * @param string $index 日志名(索引)
+     * 日志推入待刷写集合
+     * @param string $index 日志名
      * @param array|string $data 日志内容
-     * @param string $filename 日志文件名前缀
+     * @param string $type 日志类型
      */
-    function logfile(string $index, $data = '', string $filename = 'app')
+    function log_push(string $index, $data = '', string $type = 'app')
     {
-        Svc::log()->file($index, $data, $filename);
+        Svc::log()->push($index, $data, $type);
     }
 }
 

@@ -17,29 +17,27 @@ use JDI\Support\Utils;
 class Log
 {
     /**
-     * @var string 日志路径
+     * @var callable 刷写日志的回调
      */
-    protected $path_data;
+    protected $flush_handler;
 
     /**
-     * @var array 日志 data 内容
+     * @var array 自定义额外内容
      */
-    protected $data = [];
+    protected $extra_data = [];
+
+    /**
+     * @var array 待刷写的日志集合
+     */
+    protected $logs = [];
 
     /**
      * @var bool 是否自动刷写日志
      */
     protected $is_auto_flush = true;
 
-    /**
-     * @var array 执行写日志的回调集合
-     */
-    protected $write_handler = [];
-
-    public function __construct(array $conf)
+    public function __construct()
     {
-        $this->path_data = $conf['path_data'];
-
         register_shutdown_function(function () {
             if ($this->is_auto_flush) {
                 $this->flush();
@@ -57,44 +55,55 @@ class Log
     }
 
     /**
-     * 手动刷写日志
+     * 刷写日志
      */
     public function flush()
     {
-        while (1) {
-            $handler = array_shift($this->write_handler);
-            if (!$handler) {
-                break;
-            }
-
-            call_user_func($handler);
+        if (!is_callable($this->flush_handler)) {
+            trigger_error('请先调用 \JDI\Services\Log::setFlushHandler 定义刷写回调', E_USER_WARNING);
+            return;
         }
+
+        foreach ($this->logs as &$log) {
+            $log['extra_data'] = $this->extra_data;
+        }
+        unset($log);
+
+        call_user_func($this->flush_handler, $this->logs);
+        $this->logs = []; // 清空日志集合
     }
 
     /**
-     * 设置日志 data 内容<br>
-     * 场景：这里设置后，logfile() 会自动带上这些内容
+     * 自定义额外内容
      * @param string $name
      * @param $data
      */
-    public function setData(string $name, $data)
+    public function setExtraData(string $name, $data)
     {
-        $this->data[$name] = $data;
+        $this->extra_data[$name] = $data;
     }
 
     /**
-     * 文件日志
-     * @param string $index 日志名(索引)
-     * @param array|string $data 日志内容
-     * @param string $filename 日志文件名前缀
+     * 设置刷写日志的回调
+     * @param callable $flush_handler
      */
-    public function file(string $index, $data = '', string $filename = 'app')
+    public function setFlushHandler(callable $flush_handler)
     {
-        $filename = trim(str_replace('/', '', $filename));
+        $this->flush_handler = $flush_handler;
+    }
 
+    /**
+     * 日志推入待刷写集合
+     * @param string $index 日志名
+     * @param array|string $data 日志内容
+     * @param string $type 日志类型
+     */
+    public function push(string $index, $data = '', string $type = 'app')
+    {
         $log = [
             'time' => date('Y-m-d H:i:s'),
             'index' => $index,
+            'type' => $type,
             'request_id' => isset($_SERVER['REQUEST_TIME_FLOAT']) ? md5(strval($_SERVER['REQUEST_TIME_FLOAT'])) : '',
             'hostname' => php_uname('n'),
             'sapi' => PHP_SAPI,
@@ -110,19 +119,8 @@ class Log
             $log['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
         }
 
-        $path = sprintf('%s/%s_%s.log',
-            $this->path_data, $filename, date('Ym'));
-
-        $this->write_handler[] = function () use ($data, $path, $log) {
-            if (!is_array($data)) {
-                $data = strlen($data) ? ['-' => $data] : []; // 非数组时强制转为带 - 为 key 的数组元素，因为默认数字 key 会被 JSON 重新排序
-            }
-
-            $log['data'] = array_merge($this->data, $data);
-            $log = json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
-
-            file_put_contents($path, $log . PHP_EOL, FILE_APPEND);
-        };
+        $log['data'] = $data;
+        $this->logs[] = $log;
     }
 
 }
