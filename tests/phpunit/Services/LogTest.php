@@ -80,6 +80,9 @@ class LogTest extends TestCase
         $this->assertEquals(['foo' => 1], $rs[1]['data']);
         $this->assertEquals(1, $rs[1]['extra_data']['extra_num']);
         $this->assertEquals(['extra_arr' => 1], $rs[1]['extra_data']['extra_arr']);
+
+        svc_log()->flush();
+        $this->assertEquals([], $rs);
     }
 
 }
