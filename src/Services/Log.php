@@ -64,10 +64,12 @@ class Log
             return;
         }
 
-        foreach ($this->logs as &$log) {
-            $log['extra_data'] = $this->extra_data;
+        if ($this->extra_data) {
+            foreach ($this->logs as &$log) {
+                $log['extra_data'] = $this->extra_data;
+            }
+            unset($log);
         }
-        unset($log);
 
         call_user_func($this->flush_handler, $this->logs);
         $this->logs = []; // 清空日志集合
