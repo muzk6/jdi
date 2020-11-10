@@ -121,7 +121,10 @@ class Log
             $log['user_agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
         }
 
-        $log['data'] = $data;
+        if ($data) {
+            $log['data'] = $data;
+        }
+
         $this->logs[] = $log;
     }
 
