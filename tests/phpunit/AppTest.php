@@ -104,4 +104,17 @@ class AppTest extends TestCase
         $this->assertEquals(false, App::isset('foo'));
         $this->assertEquals(false, App::isset('bar'));
     }
+
+    public function testInitHandler()
+    {
+        App::$app = null;
+
+        $flag = 0;
+        App::init(['config.init_handler' => function () use (&$flag) {
+            $flag = 1;
+        }]);
+
+        $this->assertEquals(1, $flag);
+    }
+
 }
