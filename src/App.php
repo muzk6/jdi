@@ -101,8 +101,8 @@ class App implements \ArrayAccess
             isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
             isset($app['config.session_start']) || $app['config.session_start'] = true; // 开启 session
 
-            if (isset($app['config.init_handler']) && is_callable($app['config.init_handler'])) {
-                call_user_func($app['config.init_handler'], $app);
+            if (isset($values['config.init_handler']) && is_callable($values['config.init_handler'])) {
+                call_user_func($values['config.init_handler'], $app);
             } else {
                 $app->initHandler($app);
             }
