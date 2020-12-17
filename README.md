@@ -11,6 +11,10 @@
 
 ### 基本用例
 
+#### 框架用例
+
+作为框架使用
+
 *index.php*
 ```php
 require __DIR__ . '/vendor/autoload.php';
@@ -28,6 +32,18 @@ svc_router()->dispatch();
 ```
 
 开启服务：`php -S 0.0.0.0:8080`
+
+#### 库用例
+
+作为库嵌入到现有项目使用
+
+*init.php*
+```php
+// 跳过默认的初始化回调，按需写自己的回调逻辑，一般像下面空逻辑即可
+\JDI\App::init(['config.init_handler' => function () {}]);
+
+//todo 现在可以使用 JDI 的所有功能
+```
 
 ### 参数配置
 
