@@ -226,7 +226,6 @@ if (!function_exists('alert')) {
      * @param string $msg
      * @param int $backward 0.不跳转后退；1.跳转到上一页；2.后退到上一页（保留上一页的数据）；
      * @param bool|int $exit 是否 exit
-     * @return string
      */
     function alert(string $msg, int $backward = 1, bool $exit = true)
     {
