@@ -213,12 +213,27 @@ class Utils
     /**
      * JS alert() 并跳转回上一页
      * @param string $msg
+     * @param int $backward 0.不跳转后退；1.跳转到上一页；2.后退到上一页（保留上一页的数据）；
+     * @param bool|int $exit 是否 exit
      * @return string
      */
-    public static function alert(string $msg)
+    public static function alert(string $msg, int $backward = 1, $exit = true)
     {
-        echo "<script>alert('{$msg}');location.href='{$_SERVER['HTTP_REFERER']}'</script>";
-        exit;
+        $alert = "alert('{$msg}');";
+
+        if ($backward == 1) {
+            $back = "location.href='{$_SERVER['HTTP_REFERER']}';";
+        } elseif ($backward == 2) {
+            $back = "history.back();";
+        } else {
+            $back = '';
+        }
+
+        echo "<script>{$alert}{$back}</script>";
+
+        if ($exit) {
+            exit;
+        }
     }
 
     /**
