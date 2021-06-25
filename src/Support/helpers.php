@@ -200,10 +200,12 @@ if (!function_exists('request')) {
 if (!function_exists('back')) {
     /**
      * 网页后退
+     * @param int $backward 1.跳转到上一页；2.后退到上一页（保留上一页的数据）；
+     * @param bool|int $exit 是否 exit
      */
-    function back()
+    function back(int $backward = 1, $exit = true)
     {
-        Utils::back();
+        Utils::back($backward, $exit);
     }
 }
 

@@ -108,7 +108,7 @@ class Utils
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])
             && preg_match_all('#\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}#s', trim($_SERVER['HTTP_X_FORWARDED_FOR']), $matches)) {
-            foreach ($matches[0] AS $xip) {
+            foreach ($matches[0] as $xip) {
                 $xip = trim($xip);
                 if (filter_var($xip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
                     $ip = $xip;
@@ -191,11 +191,20 @@ class Utils
 
     /**
      * 网页后退
+     * @param int $backward 1.跳转到上一页；2.后退到上一页（保留上一页的数据）；
+     * @param bool|int $exit 是否 exit
      */
-    public static function back()
+    public static function back(int $backward = 1, $exit = true)
     {
-        header('Location: ' . $_SERVER['HTTP_REFERER']);
-        exit;
+        if ($backward == 1) {
+            header('Location: ' . $_SERVER['HTTP_REFERER']);
+        } elseif ($backward == 2) {
+            echo '<script>history.back();</script>';
+        }
+
+        if ($exit) {
+            exit;
+        }
     }
 
     /**
@@ -223,7 +232,7 @@ class Utils
         if ($backward == 1) {
             $back = "location.href='{$_SERVER['HTTP_REFERER']}';";
         } elseif ($backward == 2) {
-            $back = "history.back();";
+            $back = 'history.back();';
         } else {
             $back = '';
         }
