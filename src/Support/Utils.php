@@ -212,11 +212,15 @@ class Utils
      * <p>redirect('/foo/bar') 跳转到当前域名的 /foo/bar 地址去</p>
      * <p>redirect('https://google.com') 跳转到谷歌</p>
      * @param string $url
+     * @param bool|int $exit 是否 exit
      */
-    public static function redirect(string $url)
+    public static function redirect(string $url, $exit = true)
     {
         header('Location: ' . $url);
-        exit;
+
+        if ($exit) {
+            exit;
+        }
     }
 
     /**
