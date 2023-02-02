@@ -35,15 +35,7 @@ svc_router()->dispatch();
 
 #### 库用例
 
-作为库嵌入到现有项目使用
-
-*init.php*
-```php
-// 跳过默认的初始化回调，按需写自己的回调逻辑，一般像下面空逻辑即可
-\JDI\App::init(['config.init_handler' => function () {}]);
-
-//todo 现在可以使用 JDI 的所有功能
-```
+没有用例！无需`\JDI\App::init()`，可以直接作为库嵌入到现有项目使用
 
 ### 参数配置
 

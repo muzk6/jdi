@@ -85,27 +85,27 @@ class App implements \ArrayAccess
         $app = &static::$app;
         if (!$app) {
             $app = new static();
+        }
 
-            self::$ori_values = $values; // 重新初始化时用。必须每次重新赋值，场景是手动调用 init()
-            foreach ($values as $key => $value) {
-                $app[$key] = $value;
-            }
+        self::$ori_values = $values; // 重新初始化时用。必须每次重新赋值，场景是手动调用 init()
+        foreach ($values as $key => $value) {
+            $app[$key] = $value;
+        }
 
-            isset($app['config.debug']) || $app['config.debug'] = true; // 调试开发模式
-            isset($app['config.path_jdi']) || $app['config.path_jdi'] = realpath(__DIR__ . '/../'); // 框架根目录
-            isset($app['config.path_data']) || $app['config.path_data'] = $app['config.path_jdi'] . '/data'; // 数据目录
-            isset($app['config.path_view']) || $app['config.path_view'] = $app['config.path_jdi'] . '/views'; // 视图模板目录
-            isset($app['config.path_config_first']) || $app['config.path_config_first'] = ''; // 第一优先级配置目录
-            isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
-            isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
-            isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
-            isset($app['config.session_start']) || $app['config.session_start'] = true; // 开启 session
+        isset($app['config.debug']) || $app['config.debug'] = true; // 调试开发模式
+        isset($app['config.path_jdi']) || $app['config.path_jdi'] = realpath(__DIR__ . '/../'); // 框架根目录
+        isset($app['config.path_data']) || $app['config.path_data'] = $app['config.path_jdi'] . '/data'; // 数据目录
+        isset($app['config.path_view']) || $app['config.path_view'] = $app['config.path_jdi'] . '/views'; // 视图模板目录
+        isset($app['config.path_config_first']) || $app['config.path_config_first'] = ''; // 第一优先级配置目录
+        isset($app['config.path_config_second']) || $app['config.path_config_second'] = ''; // 第二优先级配置目录
+        isset($app['config.path_config_third']) || $app['config.path_config_third'] = $app['config.path_jdi'] . '/config'; // 第三优先级配置目录
+        isset($app['config.timezone']) || $app['config.timezone'] = 'PRC'; // 时区
+        isset($app['config.session_start']) || $app['config.session_start'] = true; // 开启 session
 
-            if (isset($values['config.init_handler']) && is_callable($values['config.init_handler'])) {
-                call_user_func($values['config.init_handler'], $app);
-            } else {
-                $app->initHandler($app);
-            }
+        if (isset($values['config.init_handler']) && is_callable($values['config.init_handler'])) {
+            call_user_func($values['config.init_handler'], $app);
+        } else {
+            $app->initHandler($app);
         }
 
         return $app;
@@ -257,3 +257,5 @@ class App implements \ArrayAccess
         return $app[$name];
     }
 }
+
+App::init(['config.init_handler' => function () {}]);
