@@ -77,6 +77,7 @@ class App implements \ArrayAccess
 
     /**
      * 容器单例初始化
+     * 作为框架时候，需要主动再调用一次init，为了执行 init_handler
      * @param array $values
      * @return App
      */
@@ -258,4 +259,7 @@ class App implements \ArrayAccess
     }
 }
 
-App::init(['config.init_handler' => function () {}]);
+// 不重复init，防止 App::$ori_values 被这里覆盖
+if (!App::$app) {
+    App::init(['config.init_handler' => function () {}]);
+}
