@@ -13,10 +13,10 @@
     <button>Doc Submit</button>
     <input type="button" id="ok" value="XHR Submit"/>
 </form>
-<label style="display: block; margin-top: 30px;">{{ $userId ? "ID: {$userId} 已登录" : '未登录' }}</label>
+<label style="display: block; margin-top: 30px;">{{ $user_id ? "ID: {$user_id} 已登录" : '未登录' }}</label>
 <form style="display: inline-block" method="post" action="/demo/login">
     {!! csrf_field() !!}
-    <label>UserID: <input name="user_id"></label>
+    <label>User ID: <input name="user_id"></label>
     <button>Login</button>
 </form>
 <form style="display: inline-block" method="post" action="/demo/logout">

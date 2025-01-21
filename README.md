@@ -139,7 +139,7 @@ route_post('/doc', function () {
 });
 ```
 
-POST 请求 `/xhr` 输出：`{ "s": false, "c": 0, "m": "", "d": {} }`
+POST 请求 `/xhr` 输出：`{ "state": false, "code": 0, "message": "", "data": {} }`
 
 POST 请求 `/doc` 输出 `alert()` 弹层：`doc error`
 
@@ -203,10 +203,10 @@ var_dump($request);
 *串联结果*
 ```json
 {
-    "s": false,
-    "c": 10001000,
-    "m": "参数错误",
-    "d": {
+    "state": false,
+    "code": 10001000,
+    "message": "参数错误",
+    "data": {
         "first_name": "不能为空"
     }
 }
@@ -225,10 +225,10 @@ $request = request(true); // 以并联方式验证
 *并联结果*
 ```json
 {
-    "s": false,
-    "c": 10001000,
-    "m": "参数错误",
-    "d": {
+    "state": false,
+    "code": 10001000,
+    "message": "参数错误",
+    "data": {
         "first_name": "不能为空",
         "last_name": "名字不能为空"
     }
@@ -253,14 +253,14 @@ d | double
 在路由回调里使用
 
 - `return 'Just Do It!';` Just Do It!
-- `return [];` { "s": true, "c": 0, "m": "", "d": {} }
-- `return ['foo' => 1];` { "s": true, "c": 0, "m": "", "d": { "foo": 1 } }
-- `return api_msg('保存成功');` { "s": true, "c": 0, "m": "保存成功", "d": {} }
-- `panic();` { "s": false, "c": 0, "m": "", "d": {} }
-- `panic('保存失败');` { "s": false, "c": 0, "m": "保存失败", "d": {} }
-- `panic('保存失败', ['foo' => 1]);` { "s": false, "c": 0, "m": "保存失败", "d": { "foo": 1 } }
-- `panic(10001000);` { "s": false, "c": 10001000, "m": "参数错误", "d": {} }; 参考翻译文件 lang_zh_CN.php
-- `panic([10002001, 'name' => 'tom']);` { "s": false, "c": 10002001, "m": "欢迎 tom", "d": {} }
+- `return [];` { "state": true, "code": 0, "message": "", "data": {} }
+- `return ['foo' => 1];` { "state": true, "code": 0, "message": "", "data": { "foo": 1 } }
+- `return api_msg('保存成功');` { "state": true, "code": 0, "message": "保存成功", "data": {} }
+- `panic();` { "state": false, "code": 0, "message": "", "data": {} }
+- `panic('保存失败');` { "state": false, "code": 0, "message": "保存失败", "data": {} }
+- `panic('保存失败', ['foo' => 1]);` { "state": false, "code": 0, "message": "保存失败", "data": { "foo": 1 } }
+- `panic(10001000);` { "state": false, "code": 10001000, "message": "参数错误", "data": {} }; 参考翻译文件 lang_zh_CN.php
+- `panic([10002001, 'name' => 'tom']);` { "state": false, "code": 10002001, "message": "欢迎 tom", "data": {} }
 
 以上方式都是 `return api_json()` 的衍生，更多需求可直接调用 `api_json()`
 

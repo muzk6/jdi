@@ -32,28 +32,28 @@ class Utils
     public static function api_format($state, array $data = [], string $message = '', int $code = 0)
     {
         $body = [
-            's' => false,
-            'c' => $code,
-            'm' => $message,
-            'd' => $data,
+            'state' => false,
+            'code' => $code,
+            'message' => $message,
+            'data' => $data,
         ];
 
         if ($state instanceof Exception) {
             $exception = $state;
 
-            empty($code) && $body['c'] = $exception->getCode();
-            empty($message) && $body['m'] = $exception->getMessage();
+            empty($code) && $body['code'] = $exception->getCode();
+            empty($message) && $body['message'] = $exception->getMessage();
 
-            if (empty($body['d']) && ($exception instanceof AppException)) {
-                $body['d'] = $exception->getData();
+            if (empty($body['data']) && ($exception instanceof AppException)) {
+                $body['data'] = $exception->getData();
             }
         } else {
-            $body['s'] = boolval($state);
+            $body['state'] = boolval($state);
         }
 
-        $body['s'] = boolval($body['s']);
-        $body['c'] = intval($body['c']);
-        $body['m'] = strval($body['m']);
+        $body['state'] = boolval($body['state']);
+        $body['code'] = intval($body['code']);
+        $body['message'] = strval($body['message']);
 
         return $body;
     }
@@ -77,8 +77,8 @@ class Utils
         headers_sent() || header('Content-Type: application/json; Charset=UTF-8');
 
         $body = self::api_format($state, $data, $message, $code);
-        if (empty($body['d'])) {
-            $body['d'] = new stdClass();
+        if (empty($body['data'])) {
+            $body['data'] = new stdClass();
         }
 
         return json_encode($body);
@@ -142,7 +142,7 @@ class Utils
                 trigger_error("正确用法：url(['test', '/path/to'])", E_USER_ERROR);
             }
 
-            list($alias, $path) = $path;
+            [$alias, $path] = $path;
             $conf = Svc::config()->get('url');
             if (!isset($conf[$alias])) {
                 trigger_error("url.php 不存在配置项: {$alias}", E_USER_ERROR);

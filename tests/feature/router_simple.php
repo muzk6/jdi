@@ -38,7 +38,7 @@ route_group(function () {
 
             assign('first_name', 'Hello'); // 定义模板变量
             assign('last_name', 'JDI');
-            assign('userId', svc_auth()->getUserId());
+            assign('user_id', svc_auth()->getUserId());
 
             return view('demo', ['title' => $title]); // 也可以在这里定义模板变量
         });

@@ -99,7 +99,7 @@ route_group(function () {
         echo 'bar<br>';
 
         //子组C 前置中间件1，抛出异常，或者 exit，跳过后面的所有前置中间件和路由回调，但不影响后置中间件
-        //{"s":false,"c":0,"m":"\u629b\u51fa AppException","d":{}}
+        //{"state":false,"code":0,"message":"\u629b\u51fa AppException","data":{}}
         //子组C 后置中间件1
         //根组 后置中间件1
         //异常: 有

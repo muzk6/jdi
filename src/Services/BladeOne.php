@@ -608,7 +608,7 @@ class BladeOne
      */
     protected function parseToken($token)
     {
-        list($id, $content) = $token;
+        [$id, $content] = $token;
         if ($id == T_INLINE_HTML) {
             foreach ($this->compilers as $type) {
                 $content = $this->{"compile{$type}"}($content);
@@ -878,7 +878,7 @@ class BladeOne
      */
     public static function value($value)
     {
-        return $value instanceof Closure ? $value() : $value;
+        return $value instanceof \Closure ? $value() : $value;
     }
 
     /**
