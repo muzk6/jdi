@@ -386,17 +386,17 @@ svc_log()->flush(); // 手动刷写
 - `request_flash()` 把本次请求的参数缓存起来
 - `old(string $name = null, string $default = '')` 上次请求的字段值
 
-#### `xsrf_*()` XSRF
+#### `csrf_*()` CSRF
 
-- `xsrf_field()`直接生成 HTML
-- `xsrf_token()`生成 token
-- `xsrf_check()`效验，token 来源于 `$_SERVER['HTTP_X_XSRF_TOKEN'], $_POST['_token'], $_GET['_token'], $_REQUEST['_token']`
+- `csrf_field()`直接生成 HTML
+- `csrf_token()`生成 token
+- `csrf_check()`效验，token 来源于 `$_SERVER['HTTP_X_CSRF_TOKEN'], $_POST['_token'], $_GET['_token'], $_REQUEST['_token']`
 
 请求时带上 `Token`, 使用以下任意一种方法
 
 - `POST` 请求通过表单参数 `_token`, 后端将从 `$_POST['_token']` 读取
 - `GET` 请求通过 `?_token=`, 后端将从 `$_GET['_token']` 读取
-- 通过指定请求头 `X-XSRF-Token`, 后端将从 `$_SERVER['HTTP_X_XSRF_TOKEN']` 读取
+- 通过指定请求头 `X-CSRF-Token`, 后端将从 `$_SERVER['HTTP_X_CSRF_TOKEN']` 读取
 
 #### `flash_*()` 闪存，一性次缓存
 

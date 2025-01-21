@@ -18,6 +18,7 @@ use JDI\Services\Auth;
 use JDI\Services\Blade;
 use JDI\Services\BladeOne;
 use JDI\Services\Config;
+use JDI\Services\CSRF;
 use JDI\Services\CURL;
 use JDI\Services\Flash;
 use JDI\Services\Lang;
@@ -29,7 +30,6 @@ use JDI\Services\Router;
 use JDI\Services\Whitelist;
 use JDI\Services\Xdebug;
 use JDI\Services\XHProf;
-use JDI\Services\XSRF;
 use PDO;
 use Redis;
 
@@ -201,13 +201,13 @@ class Svc
     }
 
     /**
-     * XSRF
-     * @return XSRF
+     * CSRF
+     * @return CSRF
      */
-    public static function xsrf()
+    public static function csrf()
     {
         return App::singleton(__METHOD__, function () {
-            return new XSRF(['expire' => 0]);
+            return new CSRF(['expire' => 0]);
         });
     }
 

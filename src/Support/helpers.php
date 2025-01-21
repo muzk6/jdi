@@ -366,38 +366,38 @@ if (!function_exists('flash_del')) {
     }
 }
 
-if (!function_exists('xsrf_field')) {
+if (!function_exists('csrf_field')) {
     /**
      * 生成带有 token 的表单域 html 元素
      * @return string
      */
-    function xsrf_field()
+    function csrf_field()
     {
-        return Svc::xsrf()->field();
+        return Svc::csrf()->field();
     }
 }
 
-if (!function_exists('xsrf_token')) {
+if (!function_exists('csrf_token')) {
     /**
      * 获取 token
      * <p>会话初始化时才更新 token</p>
      * @return string
      */
-    function xsrf_token()
+    function csrf_token()
     {
-        return Svc::xsrf()->token();
+        return Svc::csrf()->token();
     }
 }
 
-if (!function_exists('xsrf_check')) {
+if (!function_exists('csrf_check')) {
     /**
      * 校验 token
      * @return true
      * @throws AppException
      */
-    function xsrf_check()
+    function csrf_check()
     {
-        return Svc::xsrf()->check();
+        return Svc::csrf()->check();
     }
 }
 

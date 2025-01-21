@@ -55,7 +55,7 @@ route_group(function () {
      * 同步请求
      */
     route_post('/demo/doc', function () {
-        xsrf_check();
+        csrf_check();
 
         // 部分验证，一个一个获取
         $first_name = input('first_name');
@@ -74,7 +74,7 @@ route_group(function () {
      * 异步请求
      */
     route_post('/demo/xhr', function () {
-        xsrf_check();
+        csrf_check();
 
         validate('post.first_name')->required();
         validate('last_name')->required()->setTitle('名字');
@@ -90,7 +90,7 @@ route_group(function () {
      * 登录
      */
     route_post('/demo/login', function () {
-        xsrf_check();
+        csrf_check();
 
         $user_id = validate('user_id:i')->gt(0)->get('用户ID ');
 
@@ -104,7 +104,7 @@ route_group(function () {
      * 注销
      */
     route_post('/demo/logout', function () {
-        xsrf_check();
+        csrf_check();
 
         svc_auth()->logout();
         flash_set('msg', '注销成功');

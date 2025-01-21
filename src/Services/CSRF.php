@@ -14,10 +14,10 @@ namespace JDI\Services;
 use JDI\Exceptions\AppException;
 
 /**
- * XSRF
+ * CSRF
  * @package JDI\Services
  */
-class XSRF
+class CSRF
 {
     /**
      * @var int 过期时间(秒)
@@ -38,7 +38,7 @@ class XSRF
      */
     public function refresh()
     {
-        if (empty($_SESSION['xsrf_token'])) {
+        if (empty($_SESSION['csrf_token'])) {
             return false;
         }
 
@@ -46,7 +46,7 @@ class XSRF
             return 0;
         }
 
-        return $_SESSION['xsrf_token']['expire'] = time() + $this->expire;
+        return $_SESSION['csrf_token']['expire'] = time() + $this->expire;
     }
 
     /**
@@ -56,10 +56,10 @@ class XSRF
      */
     public function token()
     {
-        if (empty($_SESSION['xsrf_token'])) {
+        if (empty($_SESSION['csrf_token'])) {
             $token = hash_pbkdf2('sha256', session_id(), uniqid(), 1e3);
 
-            $_SESSION['xsrf_token'] = [
+            $_SESSION['csrf_token'] = [
                 'token' => $token,
                 'expire' => $this->expire ? time() + $this->expire : 0,
             ];
@@ -67,7 +67,7 @@ class XSRF
             // 每次获取令牌时都刷新过期时间
             $this->refresh();
 
-            $token = $_SESSION['xsrf_token']['token'];
+            $token = $_SESSION['csrf_token']['token'];
         }
 
         return $token;
@@ -90,8 +90,8 @@ class XSRF
      */
     public function check()
     {
-        if (isset($_SERVER['HTTP_X_XSRF_TOKEN'])) {
-            $token = $_SERVER['HTTP_X_XSRF_TOKEN'];
+        if (isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+            $token = $_SERVER['HTTP_X_CSRF_TOKEN'];
         } elseif (isset($_SERVER['REQUEST_METHOD']) && strtoupper($_SERVER['REQUEST_METHOD']) == 'POST') {
             $token = $_POST['_token'] ?? '';
         } elseif (isset($_SERVER['REQUEST_METHOD']) && strtoupper($_SERVER['REQUEST_METHOD']) == 'GET') {
@@ -104,15 +104,15 @@ class XSRF
             AppException::panic(10001001);
         }
 
-        if (empty($_SESSION['xsrf_token'])) {
+        if (empty($_SESSION['csrf_token'])) {
             AppException::panic(10001002);
         }
 
-        if ($_SESSION['xsrf_token']['expire'] && (time() > $_SESSION['xsrf_token']['expire'])) {
+        if ($_SESSION['csrf_token']['expire'] && (time() > $_SESSION['csrf_token']['expire'])) {
             AppException::panic(10001002);
         }
 
-        if ($token != $_SESSION['xsrf_token']['token']) {
+        if ($token != $_SESSION['csrf_token']['token']) {
             AppException::panic(10001001);
         }
 

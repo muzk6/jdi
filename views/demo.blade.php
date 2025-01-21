@@ -7,7 +7,7 @@
 
 <h1>{{ $title }}</h1>
 <form method="post" action="/demo/doc">
-    {!! xsrf_field() !!}
+    {!! csrf_field() !!}
     <input type="text" name="first_name" value="{{ $first_name }}">
     <input type="text" name="last_name" value="{{ $last_name }}">
     <button>Doc Submit</button>
@@ -15,12 +15,12 @@
 </form>
 <label style="display: block; margin-top: 30px;">{{ $userId ? "ID: {$userId} 已登录" : '未登录' }}</label>
 <form style="display: inline-block" method="post" action="/demo/login">
-    {!! xsrf_field() !!}
+    {!! csrf_field() !!}
     <label>UserID: <input name="user_id"></label>
     <button>Login</button>
 </form>
 <form style="display: inline-block" method="post" action="/demo/logout">
-    {!! xsrf_field() !!}
+    {!! csrf_field() !!}
     <button>Logout</button>
 </form>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>

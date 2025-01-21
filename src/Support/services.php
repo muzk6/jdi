@@ -12,6 +12,7 @@
 use JDI\Services\Auth;
 use JDI\Services\Blade;
 use JDI\Services\Config;
+use JDI\Services\CSRF;
 use JDI\Services\CURL;
 use JDI\Services\Flash;
 use JDI\Services\Lang;
@@ -23,7 +24,6 @@ use JDI\Services\Router;
 use JDI\Services\Whitelist;
 use JDI\Services\Xdebug;
 use JDI\Services\XHProf;
-use JDI\Services\XSRF;
 use JDI\Support\Svc;
 
 if (!function_exists('svc_config')) {
@@ -137,14 +137,14 @@ if (!function_exists('svc_curl')) {
     }
 }
 
-if (!function_exists('svc_xsrf')) {
+if (!function_exists('svc_csrf')) {
     /**
-     * XSRF
-     * @return XSRF
+     * CSRF
+     * @return CSRF
      */
-    function svc_xsrf()
+    function svc_csrf()
     {
-        return Svc::xsrf();
+        return Svc::csrf();
     }
 }
 
