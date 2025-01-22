@@ -12,7 +12,6 @@
 
 namespace JDI\Services;
 
-use JDI\Support\Svc;
 use JDI\Support\Utils;
 
 /**
@@ -25,25 +24,25 @@ class Whitelist
      * 支持网络号位数格式，例如 0.0.0.0/0 表示所有 IP
      * @var array
      */
-    protected $ip;
+    protected $ip_list;
 
     /**
      * 请求时带上白名单 Cookie. 判断逻辑为 isset($_COOKIE[...])
      * @var array
      */
-    protected $cookie;
+    protected $cookie_list;
 
     /**
-     * 当前登录的用户 ID
+     * 白名单用户ID
      * @var array
      */
-    protected $user_id;
+    protected $user_id_list;
 
     public function __construct(array $conf)
     {
-        $this->ip = $conf['ip'];
-        $this->cookie = $conf['cookie'];
-        $this->user_id = $conf['user_id'];
+        $this->ip_list = $conf['ip'];
+        $this->cookie_list = $conf['cookie'];
+        $this->user_id_list = $conf['user_id'];
     }
 
     /**
@@ -55,7 +54,7 @@ class Whitelist
         $client_ip_str = Utils::get_client_ip();
         $client_ip = ip2long($client_ip_str);
 
-        foreach ($this->ip as $v) {
+        foreach ($this->ip_list as $v) {
 
             if (strpos($v, '/') === false) {
                 if ($v == $client_ip_str) {
@@ -63,7 +62,7 @@ class Whitelist
                 }
 
             } else {
-                list($safe_ip_str, $subnet_num) = explode('/', $v);
+                [$safe_ip_str, $subnet_num] = explode('/', $v);
 
                 $base = ip2long('255.255.255.255');
 
@@ -84,13 +83,9 @@ class Whitelist
      * 当前用户是否在白名单内
      * @return bool
      */
-    public function isSafeUserId()
+    public function isSafeUserId($user_id)
     {
-        if (!Svc::auth()->isLogin()) {
-            return false;
-        }
-
-        return in_array(Svc::auth()->getUserId(), $this->user_id);
+        return in_array($user_id, $this->user_id_list);
     }
 
     /**
@@ -100,7 +95,7 @@ class Whitelist
     public function isSafeCookie()
     {
         $cookies = is_array($_COOKIE) ? $_COOKIE : [];
-        return array_intersect(array_keys($cookies), $this->cookie) ? true : false;
+        return array_intersect(array_keys($cookies), $this->cookie_list) ? true : false;
     }
 
 }

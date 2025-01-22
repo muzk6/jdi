@@ -32,11 +32,8 @@ class WhitelistTest extends TestCase
 
     public function testIsSafeUserId()
     {
-        svc_auth()->login(1010);
-        $this->assertEquals(true, svc_whitelist()->isSafeUserId());
-
-        svc_auth()->logout();
-        $this->assertEquals(false, svc_whitelist()->isSafeUserId());
+        $this->assertEquals(true, svc_whitelist()->isSafeUserId(1010));
+        $this->assertEquals(false, svc_whitelist()->isSafeUserId(1011));
     }
 
     public function testIsSafeCookie()

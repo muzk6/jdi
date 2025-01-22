@@ -9,6 +9,6 @@ return [
     'ip' => [],
     // 请求时带上白名单 Cookie. 判断逻辑为 isset($_COOKIE[...])
     'cookie' => [],
-    // 当前登录的用户 ID
+    // 白名单用户ID
     'user_id' => [],
 ];
