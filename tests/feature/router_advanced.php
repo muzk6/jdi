@@ -125,4 +125,4 @@ svc_router()->setStatus404Handler(function () {
     http_response_code(404);
 });
 
-svc_router()->dispatch();
+route_dispatch();

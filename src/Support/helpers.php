@@ -434,7 +434,7 @@ if (!function_exists('route_get')) {
      * @param callable $action
      * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_get($url, callable $action, callable $catch = null)
+    function route_get(string $url, callable $action, callable $catch = null)
     {
         Svc::router()->addRoute('GET', $url, $action, ['catch' => $catch]);
     }
@@ -447,7 +447,7 @@ if (!function_exists('route_post')) {
      * @param callable $action
      * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_post($url, callable $action, callable $catch = null)
+    function route_post(string $url, callable $action, callable $catch = null)
     {
         Svc::router()->addRoute('POST', $url, $action, ['catch' => $catch]);
     }
@@ -460,7 +460,7 @@ if (!function_exists('route_any')) {
      * @param callable $action
      * @param callable|null $catch 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    function route_any($url, callable $action, callable $catch = null)
+    function route_any(string $url, callable $action, callable $catch = null)
     {
         Svc::router()->addRoute('ANY', $url, $action, ['catch' => $catch]);
     }
@@ -485,6 +485,31 @@ if (!function_exists('route_group')) {
     function route_group(callable $fn)
     {
         Svc::router()->addGroup($fn);
+    }
+}
+
+if (!function_exists('route_dispatch')) {
+    /**
+     * 路由分发
+     */
+    function route_dispatch()
+    {
+        Svc::router()->dispatch();
+    }
+}
+
+if (!function_exists('route_simulate')) {
+    /**
+     * 模拟请求本地路由
+     * 使用方法：先注册路由 route_get()|route_post() 然后 route_simulate()，注意不能调用 route_dispatch()
+     * @param string $url 模拟请求的URL
+     * @param array $payload 请求内容payload
+     * @param int|string $user_id 登录用户ID
+     * @return void
+     */
+    function route_simulate(string $url, array $payload = [], $user_id = 0)
+    {
+        Svc::router()->simulate($url, $payload, $user_id);
     }
 }
 

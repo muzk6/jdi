@@ -40,12 +40,21 @@ class Request
     protected $old_request = [];
 
     /**
+     * @var array 虚拟payload，优先级最高的bucket，用于模拟/测试
+     */
+    protected $virtual_payload = [];
+
+    /**
      * 选择请求参数池 $_GET, $POST, $_REQUEST
      * @param string $method
      * @return array
      */
-    protected function pool($method = '')
+    protected function pool(string $method = '')
     {
+        if ($this->virtual_payload) {
+            return $this->virtual_payload;
+        }
+
         switch ($method) {
             case 'get':
                 $bucket = &$_GET;
@@ -139,7 +148,7 @@ class Request
      */
     protected function getValue(string $field, $default = '', callable $after = null)
     {
-        list($bucket, $field_name, $field_type) = $this->parse($field);
+        [$bucket, $field_name, $field_type] = $this->parse($field);
 
         if (isset($bucket[$field_name])) {
             if (is_array($bucket[$field_name])) {
@@ -184,7 +193,7 @@ class Request
      */
     public function input(string $field, $default = '', callable $after = null)
     {
-        list($field_name, $field_value, $field_type) = $this->getValue($field, $default, $after);
+        [$field_name, $field_value, $field_type] = $this->getValue($field, $default, $after);
         $new_value = $this->convert($field_value, $field_type);
 
         $this->request[$field_name] = [
@@ -203,7 +212,7 @@ class Request
      */
     public function validate(string $field, $default = '', callable $after = null)
     {
-        list($field_name, $field_value, $field_type) = $this->getValue($field, $default, $after);
+        [$field_name, $field_value, $field_type] = $this->getValue($field, $default, $after);
         $new_value = $this->convert($field_value, $field_type);
         $validator = new Validator($field_value, $new_value);
 
@@ -292,6 +301,16 @@ class Request
         } else {
             return $this->old_request;
         }
+    }
+
+    /**
+     * 设置虚拟payload
+     * @param array $payload
+     * @return void
+     */
+    public function setVirtualPayload(array $payload)
+    {
+        $this->virtual_payload = $payload;
     }
 
 }

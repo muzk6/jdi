@@ -136,4 +136,14 @@ class RequestTest extends TestCase
         // 本身是数组，会自动强制切换为 :a
         $this->assertEquals(['a' => 1, 'b' => 2], input('name:i'));
     }
+
+    public function testSetVirtualPayload()
+    {
+        svc_request()->setVirtualPayload(['da' => 10]);
+        $this->assertEquals(10, input('get.da'));
+        $this->assertEquals(10, input('post.da'));
+        $this->assertEquals(10, input('request.da'));
+    }
+
+
 }

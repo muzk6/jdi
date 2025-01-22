@@ -12,6 +12,14 @@ class AuthTest extends TestCase
         $this->assertEquals(true, svc_auth()->isLogin());
         $this->assertEquals(1111, svc_auth()->getUserId());
 
+        svc_auth()->simulateMode(true);
+        $this->assertEquals(false, svc_auth()->isLogin());
+        svc_auth()->login(2222);
+        $this->assertEquals(true, svc_auth()->isLogin());
+        svc_auth()->simulateMode(false);
+
+        $this->assertEquals(1111, svc_auth()->getUserId());
+
         svc_auth()->logout();
         $this->assertEquals(false, svc_auth()->isLogin());
         $this->assertEquals(0, svc_auth()->getUserId());

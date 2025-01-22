@@ -61,6 +61,11 @@ class Router
     protected $status_404_handler;
 
     /**
+     * @var bool 是否模拟请求
+     */
+    protected $is_simulate = false;
+
+    /**
      * @var mixed 响应内容
      */
     private $response_content = '';
@@ -83,7 +88,7 @@ class Router
      * @param array $opts url_type: URL 匹配模式; regexp: 正则匹配; normal: 默认，全匹配;<br>
      * catch: 捕获异常后的回调; 默认只捕获 AppException 异常并返回 state:false 的 JSON
      */
-    public function addRoute(string $method, $url, callable $action, array $opts = [])
+    public function addRoute(string $method, string $url, callable $action, array $opts = [])
     {
         if (empty($url)) {
             trigger_error('URL 不能为空: ' . json_encode(['method' => $method, 'url' => $url], JSON_UNESCAPED_SLASHES), E_USER_WARNING);
@@ -174,6 +179,10 @@ class Router
         }
 
         $request_url = parse_url(rawurldecode($_SERVER['REQUEST_URI']), PHP_URL_PATH);
+        if (!$request_url) {
+            return;
+        }
+
         if ($request_url !== '/') {
             $request_url = rtrim($request_url, '/');
         }
@@ -203,7 +212,7 @@ class Router
                     return;
                 }
 
-                if ($method_allow) {
+                if ($method_allow || $this->is_simulate) {
                     $this->matched_route = [
                         'method' => $route_value['method'],
                         'url' => $route_value['url'],
@@ -361,6 +370,34 @@ class Router
     public function getResponseContent()
     {
         return $this->response_content;
+    }
+
+    /**
+     * 模拟请求本地路由
+     * 使用方法：先注册路由 route_get()|route_post() 然后 route_simulate()，注意不能调用 route_dispatch()
+     * @param string $url 模拟请求的URL
+     * @param array $payload 请求内容payload
+     * @param int|string $user_id 登录用户ID
+     * @return void
+     */
+    public function simulate(string $url, array $payload = [], $user_id = 0)
+    {
+        $this->is_simulate = true;
+        $_SERVER['REQUEST_URI'] = $url;
+
+        Svc::auth()->simulateMode(true);
+        if ($user_id) {
+            Svc::auth()->login($user_id);
+        }
+
+        if ($payload) {
+            Svc::request()->setVirtualPayload($payload);
+        }
+
+        $this->dispatch();
+
+        Svc::auth()->simulateMode(false);
+        Svc::request()->setVirtualPayload([]);
     }
 
 }

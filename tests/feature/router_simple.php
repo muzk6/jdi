@@ -120,7 +120,7 @@ route_middleware(function () {
     ], 'access');
 });
 
-svc_router()->dispatch();
+route_dispatch();
 
 /**
  * DOC 请求异常回调

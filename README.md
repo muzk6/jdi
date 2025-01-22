@@ -28,14 +28,14 @@ route_get('/', function () {
 });
 
 // 分发路由
-svc_router()->dispatch();
+route_dispatch();
 ```
 
 开启服务：`php -S 0.0.0.0:8080`
 
 #### 库用例
 
-没有用例！无需`\JDI\App::init()`，可以直接作为库嵌入到现有项目使用
+无需`\JDI\App::init()`，可以直接作为库嵌入到现有项目使用
 
 ### 参数配置
 
@@ -142,6 +142,17 @@ route_post('/doc', function () {
 POST 请求 `/xhr` 输出：`{ "state": false, "code": 0, "message": "", "data": {} }`
 
 POST 请求 `/doc` 输出 `alert()` 弹层：`doc error`
+
+
+#### 模拟请求本地路由
+
+```php
+route_get('/idnex', function() {
+    return [input('get.da:i'), svc_auth()->isLogin()];
+});
+
+route_simulate('/idnex', ['da' => 10], 1010); // 注意在这之前不能调用 route_dispatch()
+```
 
 #### 路由的其它方法
 

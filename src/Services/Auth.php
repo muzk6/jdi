@@ -24,12 +24,37 @@ class Auth
     protected $prefix;
 
     /**
+     * @var array 缓存容器
+     */
+    protected $bucket;
+
+    /**
+     * @var array 虚拟容器
+     */
+    protected $virtual_bucket = [];
+
+    /**
      * AppAuth constructor.
      * @param array $config
      */
     public function __construct(array $config)
     {
         $this->prefix = $config['prefix'];
+        $this->bucket = &$_SESSION;
+    }
+
+    /**
+     * 设置模拟模式
+     * @param bool $open
+     * @return void
+     */
+    public function simulateMode(bool $open)
+    {
+        if ($open) {
+            $this->bucket = &$this->virtual_bucket;
+        } else {
+            $this->bucket = &$_SESSION;
+        }
     }
 
     /**
@@ -38,7 +63,7 @@ class Auth
      */
     public function login(string $user_id)
     {
-        $_SESSION[$this->prefix . 'user_id'] = $user_id;
+        $this->bucket[$this->prefix . 'user_id'] = $user_id;
     }
 
     /**
@@ -46,7 +71,7 @@ class Auth
      */
     public function logout()
     {
-        unset($_SESSION[$this->prefix . 'user_id']);
+        unset($this->bucket[$this->prefix . 'user_id']);
     }
 
     /**
@@ -55,11 +80,11 @@ class Auth
      */
     public function getUserId()
     {
-        if (isset($_SESSION[$this->prefix . 'user_id'])) {
-            if (is_numeric($_SESSION[$this->prefix . 'user_id'])) {
-                return intval($_SESSION[$this->prefix . 'user_id']);
+        if (isset($this->bucket[$this->prefix . 'user_id'])) {
+            if (is_numeric($this->bucket[$this->prefix . 'user_id'])) {
+                return intval($this->bucket[$this->prefix . 'user_id']);
             } else {
-                return $_SESSION[$this->prefix . 'user_id'];
+                return $this->bucket[$this->prefix . 'user_id'];
             }
         } else {
             return 0;
@@ -72,6 +97,6 @@ class Auth
      */
     public function isLogin()
     {
-        return !empty($_SESSION[$this->prefix . 'user_id']);
+        return !empty($this->bucket[$this->prefix . 'user_id']);
     }
 }

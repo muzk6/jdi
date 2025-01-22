@@ -21,4 +21,4 @@ route_any('#^/(?<ct>[a-zA-Z_\d]+)/?(?<ac>[a-zA-Z_\d]+)?/?$#', function () {
     // return $ctl->$matches['ac'](); // 调用 action
 });
 
-svc_router()->dispatch();
+route_dispatch();

@@ -44,7 +44,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/root?a=1';
-        svc_router()->dispatch();
+        route_dispatch();
         $this->assertTrue(true);
 
         // 因为后置中间件也是在 register_shutdown_function() 里执行的
@@ -81,7 +81,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/group?a=1';
-        svc_router()->dispatch();
+        route_dispatch();
         $this->assertTrue(true);
 
         // 因为后置中间件也是在 register_shutdown_function() 里执行的
@@ -100,7 +100,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/get?a=1';
-        svc_router()->dispatch();
+        route_dispatch();
 
         $this->assertEquals('get', $rs);
         $this->assertEquals(['method' => 'GET', 'url' => '/get', 'is_regexp' => false], svc_router()->getMatchedRoute());
@@ -119,7 +119,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['REQUEST_URI'] = '/ANY_123?a=1';
-        svc_router()->dispatch();
+        route_dispatch();
 
         $this->assertEquals('any;The Exception;', $rs);
         $this->assertEquals(['method' => 'ANY', 'url' => '#any(_\d+)?#i', 'is_regexp' => true], svc_router()->getMatchedRoute());
@@ -139,7 +139,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['REQUEST_URI'] = '/';
-        svc_router()->dispatch();
+        route_dispatch();
     }
 
     public function testSetResponseContent()
@@ -161,7 +161,7 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/';
-        svc_router()->dispatch();
+        route_dispatch();
 
         register_shutdown_function(function () use (&$rs) {
             $this->assertEquals('new_content', $rs);
@@ -186,13 +186,34 @@ class RouterTest extends TestCase
 
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/';
-        svc_router()->dispatch();
+        route_dispatch();
 
         register_shutdown_function(function () use (&$rs) {
             $this->assertEquals('catch:AppException', $rs);
         });
 
         $this->assertEquals(['method' => 'GET', 'url' => '/', 'is_regexp' => false], svc_router()->getMatchedRoute());
+    }
+
+    public function testSimulate()
+    {
+        $rs = '';
+
+        route_get('/demo/index', function() {
+            return [input('get.da:i'), svc_auth()->isLogin()];
+        });
+
+        route_middleware(function () use (&$rs) {
+            $rs = svc_router()->getResponseContent();
+        });
+
+        route_simulate('/demo/index', ['da' => 10], 1010);
+
+        register_shutdown_function(function () use (&$rs) {
+            $this->assertEquals([10, true], $rs);
+        });
+
+        $this->assertEquals(['method' => 'GET', 'url' => '/demo/index', 'is_regexp' => false], svc_router()->getMatchedRoute());
     }
 
 }
